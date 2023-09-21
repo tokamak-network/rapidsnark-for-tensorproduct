@@ -1,0 +1,2 @@
+/Users/hwangjaeseung/workspace/zkp/rapidsnark/CMakeFiles/edit_cache.dir
+/Users/hwangjaeseung/workspace/zkp/rapidsnark/CMakeFiles/rebuild_cache.dir
