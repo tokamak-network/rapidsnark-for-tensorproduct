@@ -32,7 +32,7 @@ function buildPistache() {
 
 
 function buildProverServer() {
-    sh("g++" +
+    sh("g++-13" +
         " -I."+
         " -I../src"+
         " -I../depends/pistache/include"+
@@ -55,13 +55,13 @@ function buildProverServer() {
         " fr.o"+
         " -L../depends/pistache/build/src -lpistache"+
         " -o proverServer"+
-        " -fmax-errors=5 -pthread -std=c++17 -fopenmp -lgmp -lsodium -g -DSANITY_CHECK", {cwd: "build", nopipe: true}
+        " -pthread -std=c++17 -fopenmp -lgmp -lsodium -g -DSANITY_CHECK", {cwd: "build", nopipe: true}
     );
 }
 
 
 function buildProver() {
-    sh("g++" +
+    sh("g++-13" +
         " -I."+
         " -I../src"+
         " -I../depends/ffiasm/c"+
@@ -80,8 +80,21 @@ function buildProver() {
         " fr.cpp"+
         " fr.o"+
         " -o prover" +
-        " -fmax-errors=5 -std=c++17 -pthread -lgmp -lsodium -O3 -fopenmp", {cwd: "build", nopipe: true}
+        " -fmax-errors=5 -std=c++17 -pthread -lgmp -lsodium -O3 ", {cwd: "build", nopipe: true}
     );
+}
+
+function buildTensorProduct() {
+    // sh("g++-13" +
+    //    " -fopenmp" +
+    //    " ../src/tensor_product.cpp" +
+    //    " -I /usr/local/Cellar/nlohmann-json/3.11.2/include" +
+    //    " -I../depends/ffiasm/c" +
+    //    " -I /usr/local/Cellar/libsodium/1.0.18_1/include" +
+    //    " -I."+
+    //    " -I../src"
+    // )
+    sh("g++-13 -fopenmp src/tensor_product.cpp -I../depends/json/single_include -I /usr/local/Cellar/nlohmann-json/3.11.2/include -I ./depends/ffiasm/c -I /usr/local/Cellar/libsodium/1.0.18_1/include")
 }
 
 
@@ -90,5 +103,6 @@ cli({
     createFieldSources,
     buildPistache,
     buildProverServer,
-    buildProver
+    buildProver,
+    buildTensorProduct
 });
