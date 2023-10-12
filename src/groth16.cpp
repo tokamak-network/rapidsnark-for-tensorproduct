@@ -46,6 +46,21 @@ std::unique_ptr<Prover<Engine>> makeProver(
 }
 
 template <typename Engine>
+std::unique_ptr<Prover<Engine>> tensorProduct(void *_array1, void *_array2, int array1_size, int array2_size) {
+    typename Engine::FrElement product;
+    product(array1_size, array2_size);
+
+    #pragma omp parallel for
+    for (size_t i = 0; i < array1_size; i++) {
+        for (size_t j = 0; j < array2_size; j++) {
+            product[i][j] = E.fr.mul(_array2[0][j], _array1[i][0]);
+        }
+    }
+
+    return product;
+};
+
+template <typename Engine>
 std::unique_ptr<Proof<Engine>> Prover<Engine>::prove(typename Engine::FrElement *wtns) {
 
     LOG_TRACE("Start Initializing a b c A");

@@ -100,7 +100,11 @@
         "fr.h": "c",
         "hash_set": "cpp",
         "stack": "cpp",
-        "ranges": "cpp"
+        "ranges": "cpp",
+        "any": "cpp",
+        "codecvt": "cpp",
+        "semaphore": "cpp",
+        "stop_token": "cpp"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }

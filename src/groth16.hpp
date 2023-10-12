@@ -120,25 +120,27 @@ namespace Groth16 {
         void *pointsH
     );
 
-#pragma pack(pop)
-    template <typename Engine>
-    class TensorProduct {
-        Engine &E;
-        // typename Engine::G1PointAffine &_array1;
-        // typename Engine::G1PointAffine &_array2;
-    public:
-        Engine &E;
-        typename Engine::FG1PointAffiner &_array1;
-        typename Engine::G1PointAffine &_array2;
-        typename Engine::FrElement fr;
+    // template <typename Engine>
+    // std::unique_ptr<Prover<Engine>> tensorProduct(void *_array1, void *_arry2);
 
-        TensorProduct(
-            typename Engine::Fr &_array1,
-            typename Engine::Fr &_array2
-        ) : fr {};
+    // template <typename Engine>
+    // class TensorProduct {
+    //     Engine &E;
+    //     // typename Engine::G1PointAffine &_array1;
+    //     // typename Engine::G1PointAffine &_array2;
+    // public:
+    //     Engine &E;
+    //     typename Engine::FG1PointAffiner &_array1;
+    //     typename Engine::G1PointAffine &_array2;
+    //     typename Engine::FrElement fr;
+
+    //     TensorProduct(
+    //         typename Engine::Fr &_array1,
+    //         typename Engine::Fr &_array2
+    //     ) : fr {};
         
-    };
-    std::unique_ptr<Prover<Engine>> tensorProduct(void *_array1, void *_arry2);
+    // };
+    // std::unique_ptr<Prover<Engine>> tensorProduct(void *_array1, void *_arry2);
 };
 
 
