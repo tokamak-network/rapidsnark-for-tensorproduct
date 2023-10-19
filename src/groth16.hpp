@@ -21,6 +21,14 @@ namespace Groth16 {
         Proof(Engine &_E) : E(_E) { };
         std::string toJsonStr();
         json toJson();
+
+        tensorProduct(
+            typename Engine::FrElement *_product,
+            typename Engine::FrElement *_array1, 
+            typename Engine::FrElement *_array2,
+            int array1_size,
+            int array2_size
+        );
     };
 
 
@@ -99,6 +107,12 @@ namespace Groth16 {
         }
 
         std::unique_ptr<Proof<Engine>> prove(typename Engine::FrElement *wtns);
+        std::unique_ptr<Proof<Engine>> tensorProduct(
+            typename Engine::FrElement *_array1, 
+            typename Engine::FrElement *_array2,
+            int array1_size,
+            int array2_size
+        );
     };
 
     template <typename Engine>
