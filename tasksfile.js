@@ -32,7 +32,7 @@ function buildPistache() {
 
 
 function buildProverServer() {
-    sh("g++-13" +
+    sh("g++" +
         " -I."+
         " -I../src"+
         " -I../depends/pistache/include"+
@@ -61,7 +61,7 @@ function buildProverServer() {
 
 
 function buildProver() {
-    sh("g++-13" +
+    sh("g++" +
         " -I."+
         " -I../src"+
         " -I../depends/ffiasm/c"+
