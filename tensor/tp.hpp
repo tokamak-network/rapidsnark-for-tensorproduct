@@ -1,14 +1,15 @@
-// #ifndef FUNCTIONS_H
-// #define FUNCTIONS_H
+#ifndef FUNCTIONS_H
+#define FUNCTIONS_H
 #include <iostream>
 #include <string>
 #include <fstream>
-#include <alt_bn128.hpp>
+#include "alt_bn128.hpp"
 using namespace std;
+// extern "C" 
 
-class functions
+namespace functions
 {
-  public:
+  
   void tensorProduct(
     typename AltBn128::Engine::FrElement& _array1, 
     typename AltBn128::Engine::FrElement& _array2,
@@ -17,3 +18,6 @@ class functions
   );
 
 };
+// #include "tp.cpp"
+
+#endif

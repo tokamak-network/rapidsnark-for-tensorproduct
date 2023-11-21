@@ -22,13 +22,13 @@ namespace Groth16 {
         std::string toJsonStr();
         json toJson();
 
-        tensorProduct(
-            typename Engine::FrElement *_product,
-            typename Engine::FrElement *_array1, 
-            typename Engine::FrElement *_array2,
-            int array1_size,
-            int array2_size
-        );
+        // tensorProduct(
+        //     typename Engine::FrElement *_product,
+        //     typename Engine::FrElement *_array1, 
+        //     typename Engine::FrElement *_array2,
+        //     int array1_size,
+        //     int array2_size
+        // );
     };
 
 
