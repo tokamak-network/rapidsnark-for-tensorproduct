@@ -32,7 +32,7 @@ function buildPistache() {
 
 
 function buildProverServer() {
-    sh("g++-13" +
+    sh("g++" +
         " -I."+
         " -I../src"+
         " -I../depends/pistache/include"+
@@ -55,7 +55,7 @@ function buildProverServer() {
         " fr.o"+
         " -L../depends/pistache/build/src -lpistache"+
         " -o proverServer"+
-        " -pthread -std=c++17 -fopenmp -lgmp -lsodium -g -DSANITY_CHECK", {cwd: "build", nopipe: true}
+        " -pthread -std=c++17  -lgmp -lsodium -g -DSANITY_CHECK", {cwd: "build", nopipe: true}
     );
 }
 
