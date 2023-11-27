@@ -14,12 +14,12 @@ void tensorProduct(
 
     typename AltBn128::Engine::FrElement product;
     #pragma omp parallel for
-    // for (u_int64_t i = 0; i < array1_size; i++) {
+    for (u_int64_t i = 0; i < array1_size; i++) {
         // for (size_t j = 0; j < array2_size; j++) {
             // E.fr.mul(product[i][j], _array2[0][j], _array1[i][0]);
-            E.fr.mul(product, product, coef);
+            E.fr.mul(product, _array1[i], _array2);
         // }
-    // }
+    }
 
     // return product;
 }
