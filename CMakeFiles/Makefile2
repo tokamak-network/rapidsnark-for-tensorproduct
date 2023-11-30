@@ -63,16 +63,231 @@ CMAKE_BINARY_DIR = /Users/hwangjaeseung/workspace/zkp/rapidsnark
 # Directory level rules for the build root directory
 
 # The main recursive "all" target.
-all:
+all: src/all
 .PHONY : all
 
 # The main recursive "preinstall" target.
-preinstall:
+preinstall: src/preinstall
 .PHONY : preinstall
 
 # The main recursive "clean" target.
-clean:
+clean: src/clean
 .PHONY : clean
+
+#=============================================================================
+# Directory level rules for directory src
+
+# Recursive "all" directory target.
+src/all: src/CMakeFiles/fr.dir/all
+src/all: src/CMakeFiles/fq.dir/all
+src/all: src/CMakeFiles/rapidsnarkStatic.dir/all
+src/all: src/CMakeFiles/rapidsnarkStaticFrFq.dir/all
+src/all: src/CMakeFiles/prover.dir/all
+src/all: src/CMakeFiles/rapidsnark.dir/all
+src/all: src/CMakeFiles/test_prover.dir/all
+.PHONY : src/all
+
+# Recursive "preinstall" directory target.
+src/preinstall:
+.PHONY : src/preinstall
+
+# Recursive "clean" directory target.
+src/clean: src/CMakeFiles/fr.dir/clean
+src/clean: src/CMakeFiles/fq.dir/clean
+src/clean: src/CMakeFiles/rapidsnarkStatic.dir/clean
+src/clean: src/CMakeFiles/rapidsnarkStaticFrFq.dir/clean
+src/clean: src/CMakeFiles/prover.dir/clean
+src/clean: src/CMakeFiles/rapidsnark.dir/clean
+src/clean: src/CMakeFiles/test_prover.dir/clean
+.PHONY : src/clean
+
+#=============================================================================
+# Target rules for target src/CMakeFiles/fr.dir
+
+# All Build rule for target.
+src/CMakeFiles/fr.dir/all:
+	$(MAKE) $(MAKESILENT) -f src/CMakeFiles/fr.dir/build.make src/CMakeFiles/fr.dir/depend
+	$(MAKE) $(MAKESILENT) -f src/CMakeFiles/fr.dir/build.make src/CMakeFiles/fr.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/hwangjaeseung/workspace/zkp/rapidsnark/CMakeFiles --progress-num=6,7,8,9,10 "Built target fr"
+.PHONY : src/CMakeFiles/fr.dir/all
+
+# Build rule for subdir invocation for target.
+src/CMakeFiles/fr.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/hwangjaeseung/workspace/zkp/rapidsnark/CMakeFiles 5
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/CMakeFiles/fr.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/hwangjaeseung/workspace/zkp/rapidsnark/CMakeFiles 0
+.PHONY : src/CMakeFiles/fr.dir/rule
+
+# Convenience name for target.
+fr: src/CMakeFiles/fr.dir/rule
+.PHONY : fr
+
+# clean rule for target.
+src/CMakeFiles/fr.dir/clean:
+	$(MAKE) $(MAKESILENT) -f src/CMakeFiles/fr.dir/build.make src/CMakeFiles/fr.dir/clean
+.PHONY : src/CMakeFiles/fr.dir/clean
+
+#=============================================================================
+# Target rules for target src/CMakeFiles/fq.dir
+
+# All Build rule for target.
+src/CMakeFiles/fq.dir/all: src/CMakeFiles/fr.dir/all
+	$(MAKE) $(MAKESILENT) -f src/CMakeFiles/fq.dir/build.make src/CMakeFiles/fq.dir/depend
+	$(MAKE) $(MAKESILENT) -f src/CMakeFiles/fq.dir/build.make src/CMakeFiles/fq.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/hwangjaeseung/workspace/zkp/rapidsnark/CMakeFiles --progress-num=1,2,3,4,5 "Built target fq"
+.PHONY : src/CMakeFiles/fq.dir/all
+
+# Build rule for subdir invocation for target.
+src/CMakeFiles/fq.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/hwangjaeseung/workspace/zkp/rapidsnark/CMakeFiles 10
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/CMakeFiles/fq.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/hwangjaeseung/workspace/zkp/rapidsnark/CMakeFiles 0
+.PHONY : src/CMakeFiles/fq.dir/rule
+
+# Convenience name for target.
+fq: src/CMakeFiles/fq.dir/rule
+.PHONY : fq
+
+# clean rule for target.
+src/CMakeFiles/fq.dir/clean:
+	$(MAKE) $(MAKESILENT) -f src/CMakeFiles/fq.dir/build.make src/CMakeFiles/fq.dir/clean
+.PHONY : src/CMakeFiles/fq.dir/clean
+
+#=============================================================================
+# Target rules for target src/CMakeFiles/rapidsnarkStatic.dir
+
+# All Build rule for target.
+src/CMakeFiles/rapidsnarkStatic.dir/all: src/CMakeFiles/fr.dir/all
+src/CMakeFiles/rapidsnarkStatic.dir/all: src/CMakeFiles/fq.dir/all
+	$(MAKE) $(MAKESILENT) -f src/CMakeFiles/rapidsnarkStatic.dir/build.make src/CMakeFiles/rapidsnarkStatic.dir/depend
+	$(MAKE) $(MAKESILENT) -f src/CMakeFiles/rapidsnarkStatic.dir/build.make src/CMakeFiles/rapidsnarkStatic.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/hwangjaeseung/workspace/zkp/rapidsnark/CMakeFiles --progress-num=24,25,26,27,28,29,30,31,32,33,34 "Built target rapidsnarkStatic"
+.PHONY : src/CMakeFiles/rapidsnarkStatic.dir/all
+
+# Build rule for subdir invocation for target.
+src/CMakeFiles/rapidsnarkStatic.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/hwangjaeseung/workspace/zkp/rapidsnark/CMakeFiles 21
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/CMakeFiles/rapidsnarkStatic.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/hwangjaeseung/workspace/zkp/rapidsnark/CMakeFiles 0
+.PHONY : src/CMakeFiles/rapidsnarkStatic.dir/rule
+
+# Convenience name for target.
+rapidsnarkStatic: src/CMakeFiles/rapidsnarkStatic.dir/rule
+.PHONY : rapidsnarkStatic
+
+# clean rule for target.
+src/CMakeFiles/rapidsnarkStatic.dir/clean:
+	$(MAKE) $(MAKESILENT) -f src/CMakeFiles/rapidsnarkStatic.dir/build.make src/CMakeFiles/rapidsnarkStatic.dir/clean
+.PHONY : src/CMakeFiles/rapidsnarkStatic.dir/clean
+
+#=============================================================================
+# Target rules for target src/CMakeFiles/rapidsnarkStaticFrFq.dir
+
+# All Build rule for target.
+src/CMakeFiles/rapidsnarkStaticFrFq.dir/all: src/CMakeFiles/fr.dir/all
+src/CMakeFiles/rapidsnarkStaticFrFq.dir/all: src/CMakeFiles/fq.dir/all
+	$(MAKE) $(MAKESILENT) -f src/CMakeFiles/rapidsnarkStaticFrFq.dir/build.make src/CMakeFiles/rapidsnarkStaticFrFq.dir/depend
+	$(MAKE) $(MAKESILENT) -f src/CMakeFiles/rapidsnarkStaticFrFq.dir/build.make src/CMakeFiles/rapidsnarkStaticFrFq.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/hwangjaeseung/workspace/zkp/rapidsnark/CMakeFiles --progress-num=35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53 "Built target rapidsnarkStaticFrFq"
+.PHONY : src/CMakeFiles/rapidsnarkStaticFrFq.dir/all
+
+# Build rule for subdir invocation for target.
+src/CMakeFiles/rapidsnarkStaticFrFq.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/hwangjaeseung/workspace/zkp/rapidsnark/CMakeFiles 29
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/CMakeFiles/rapidsnarkStaticFrFq.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/hwangjaeseung/workspace/zkp/rapidsnark/CMakeFiles 0
+.PHONY : src/CMakeFiles/rapidsnarkStaticFrFq.dir/rule
+
+# Convenience name for target.
+rapidsnarkStaticFrFq: src/CMakeFiles/rapidsnarkStaticFrFq.dir/rule
+.PHONY : rapidsnarkStaticFrFq
+
+# clean rule for target.
+src/CMakeFiles/rapidsnarkStaticFrFq.dir/clean:
+	$(MAKE) $(MAKESILENT) -f src/CMakeFiles/rapidsnarkStaticFrFq.dir/build.make src/CMakeFiles/rapidsnarkStaticFrFq.dir/clean
+.PHONY : src/CMakeFiles/rapidsnarkStaticFrFq.dir/clean
+
+#=============================================================================
+# Target rules for target src/CMakeFiles/prover.dir
+
+# All Build rule for target.
+src/CMakeFiles/prover.dir/all: src/CMakeFiles/fr.dir/all
+src/CMakeFiles/prover.dir/all: src/CMakeFiles/fq.dir/all
+src/CMakeFiles/prover.dir/all: src/CMakeFiles/rapidsnarkStatic.dir/all
+	$(MAKE) $(MAKESILENT) -f src/CMakeFiles/prover.dir/build.make src/CMakeFiles/prover.dir/depend
+	$(MAKE) $(MAKESILENT) -f src/CMakeFiles/prover.dir/build.make src/CMakeFiles/prover.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/hwangjaeseung/workspace/zkp/rapidsnark/CMakeFiles --progress-num=11,12 "Built target prover"
+.PHONY : src/CMakeFiles/prover.dir/all
+
+# Build rule for subdir invocation for target.
+src/CMakeFiles/prover.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/hwangjaeseung/workspace/zkp/rapidsnark/CMakeFiles 23
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/CMakeFiles/prover.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/hwangjaeseung/workspace/zkp/rapidsnark/CMakeFiles 0
+.PHONY : src/CMakeFiles/prover.dir/rule
+
+# Convenience name for target.
+prover: src/CMakeFiles/prover.dir/rule
+.PHONY : prover
+
+# clean rule for target.
+src/CMakeFiles/prover.dir/clean:
+	$(MAKE) $(MAKESILENT) -f src/CMakeFiles/prover.dir/build.make src/CMakeFiles/prover.dir/clean
+.PHONY : src/CMakeFiles/prover.dir/clean
+
+#=============================================================================
+# Target rules for target src/CMakeFiles/rapidsnark.dir
+
+# All Build rule for target.
+src/CMakeFiles/rapidsnark.dir/all: src/CMakeFiles/fr.dir/all
+src/CMakeFiles/rapidsnark.dir/all: src/CMakeFiles/fq.dir/all
+	$(MAKE) $(MAKESILENT) -f src/CMakeFiles/rapidsnark.dir/build.make src/CMakeFiles/rapidsnark.dir/depend
+	$(MAKE) $(MAKESILENT) -f src/CMakeFiles/rapidsnark.dir/build.make src/CMakeFiles/rapidsnark.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/hwangjaeseung/workspace/zkp/rapidsnark/CMakeFiles --progress-num=13,14,15,16,17,18,19,20,21,22,23 "Built target rapidsnark"
+.PHONY : src/CMakeFiles/rapidsnark.dir/all
+
+# Build rule for subdir invocation for target.
+src/CMakeFiles/rapidsnark.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/hwangjaeseung/workspace/zkp/rapidsnark/CMakeFiles 21
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/CMakeFiles/rapidsnark.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/hwangjaeseung/workspace/zkp/rapidsnark/CMakeFiles 0
+.PHONY : src/CMakeFiles/rapidsnark.dir/rule
+
+# Convenience name for target.
+rapidsnark: src/CMakeFiles/rapidsnark.dir/rule
+.PHONY : rapidsnark
+
+# clean rule for target.
+src/CMakeFiles/rapidsnark.dir/clean:
+	$(MAKE) $(MAKESILENT) -f src/CMakeFiles/rapidsnark.dir/build.make src/CMakeFiles/rapidsnark.dir/clean
+.PHONY : src/CMakeFiles/rapidsnark.dir/clean
+
+#=============================================================================
+# Target rules for target src/CMakeFiles/test_prover.dir
+
+# All Build rule for target.
+src/CMakeFiles/test_prover.dir/all: src/CMakeFiles/fr.dir/all
+src/CMakeFiles/test_prover.dir/all: src/CMakeFiles/fq.dir/all
+	$(MAKE) $(MAKESILENT) -f src/CMakeFiles/test_prover.dir/build.make src/CMakeFiles/test_prover.dir/depend
+	$(MAKE) $(MAKESILENT) -f src/CMakeFiles/test_prover.dir/build.make src/CMakeFiles/test_prover.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/hwangjaeseung/workspace/zkp/rapidsnark/CMakeFiles --progress-num=54,55 "Built target test_prover"
+.PHONY : src/CMakeFiles/test_prover.dir/all
+
+# Build rule for subdir invocation for target.
+src/CMakeFiles/test_prover.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/hwangjaeseung/workspace/zkp/rapidsnark/CMakeFiles 12
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/CMakeFiles/test_prover.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/hwangjaeseung/workspace/zkp/rapidsnark/CMakeFiles 0
+.PHONY : src/CMakeFiles/test_prover.dir/rule
+
+# Convenience name for target.
+test_prover: src/CMakeFiles/test_prover.dir/rule
+.PHONY : test_prover
+
+# clean rule for target.
+src/CMakeFiles/test_prover.dir/clean:
+	$(MAKE) $(MAKESILENT) -f src/CMakeFiles/test_prover.dir/build.make src/CMakeFiles/test_prover.dir/clean
+.PHONY : src/CMakeFiles/test_prover.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

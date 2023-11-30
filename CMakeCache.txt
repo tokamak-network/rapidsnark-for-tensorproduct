@@ -20,13 +20,31 @@ CMAKE_ADDR2LINE:FILEPATH=CMAKE_ADDR2LINE-NOTFOUND
 //Path to a program.
 CMAKE_AR:FILEPATH=/Library/Developer/CommandLineTools/usr/bin/ar
 
+//ASM compiler
+CMAKE_ASM_COMPILER:FILEPATH=/Library/Developer/CommandLineTools/usr/bin/cc
+
+//Flags used by the ASM compiler during all build types.
+CMAKE_ASM_FLAGS:STRING=
+
+//Flags used by the ASM compiler during DEBUG builds.
+CMAKE_ASM_FLAGS_DEBUG:STRING=-g
+
+//Flags used by the ASM compiler during MINSIZEREL builds.
+CMAKE_ASM_FLAGS_MINSIZEREL:STRING=-Os -DNDEBUG
+
+//Flags used by the ASM compiler during RELEASE builds.
+CMAKE_ASM_FLAGS_RELEASE:STRING=-O3 -DNDEBUG
+
+//Flags used by the ASM compiler during RELWITHDEBINFO builds.
+CMAKE_ASM_FLAGS_RELWITHDEBINFO:STRING=-O2 -g -DNDEBUG
+
 //For backwards compatibility, what version of CMake commands and
 // syntax should this version of CMake try to support.
 CMAKE_BACKWARDS_COMPATIBILITY:STRING=2.4
 
 //Choose the type of build, options are: None Debug Release RelWithDebInfo
 // MinSizeRel ...
-CMAKE_BUILD_TYPE:STRING=
+CMAKE_BUILD_TYPE:STRING=Release
 
 //Enable/Disable color output during build.
 CMAKE_COLOR_MAKEFILE:BOOL=ON
@@ -103,7 +121,7 @@ CMAKE_FIND_PACKAGE_REDIRECTS_DIR:STATIC=/Users/hwangjaeseung/workspace/zkp/rapid
 CMAKE_INSTALL_NAME_TOOL:FILEPATH=/usr/bin/install_name_tool
 
 //Install path prefix, prepended onto install directories.
-CMAKE_INSTALL_PREFIX:PATH=/usr/local
+CMAKE_INSTALL_PREFIX:PATH=/Users/hwangjaeseung/workspace/zkp/rapidsnark/package_macos_arm64
 
 //Path to a program.
 CMAKE_LINKER:FILEPATH=/Library/Developer/CommandLineTools/usr/bin/ld
@@ -158,7 +176,7 @@ CMAKE_PROJECT_DESCRIPTION:STATIC=
 CMAKE_PROJECT_HOMEPAGE_URL:STATIC=
 
 //Value Computed by CMake
-CMAKE_PROJECT_NAME:STATIC=Project
+CMAKE_PROJECT_NAME:STATIC=rapidsnark
 
 //Path to a program.
 CMAKE_RANLIB:FILEPATH=/Library/Developer/CommandLineTools/usr/bin/ranlib
@@ -231,6 +249,12 @@ EXECUTABLE_OUTPUT_PATH:PATH=
 //Single output directory for building all libraries.
 LIBRARY_OUTPUT_PATH:PATH=
 
+//CXX compiler flags for OpenMP parallelization
+OpenMP_CXX_FLAGS:STRING=NOTFOUND
+
+//CXX compiler libraries for OpenMP parallelization
+OpenMP_CXX_LIB_NAMES:STRING=NOTFOUND
+
 //Value Computed by CMake
 Project_BINARY_DIR:STATIC=/Users/hwangjaeseung/workspace/zkp/rapidsnark
 
@@ -243,8 +267,41 @@ Project_SOURCE_DIR:STATIC=/Users/hwangjaeseung/workspace/zkp/rapidsnark
 //The directory containing a CMake configuration file for RapidJSON.
 RapidJSON_DIR:PATH=/Users/hwangjaeseung/workspace/zkp/rapidsnark/depends/pistache/build/_deps/rapidjson-build
 
+//No help, variable specified on the command line.
+TARGET_PLATFORM:UNINITIALIZED=macos_arm64
+
+//Use asm implementation for Fr and Fq
+USE_ASM:BOOL=ON
+
+//Use OpenMP
+USE_OPENMP:BOOL=ON
+
+//Dependencies for the target
+fq_LIB_DEPENDS:STATIC=general;/Users/hwangjaeseung/workspace/zkp/rapidsnark/depends/gmp/package_macos_arm64/lib/libgmp.a;general;fr;
+
+//Dependencies for the target
+fr_LIB_DEPENDS:STATIC=general;/Users/hwangjaeseung/workspace/zkp/rapidsnark/depends/gmp/package_macos_arm64/lib/libgmp.a;
+
 //Dependencies for the target
 pistache_static_LIB_DEPENDS:STATIC=general;Threads::Threads;
+
+//Dependencies for the target
+rapidsnarkStaticFrFq_LIB_DEPENDS:STATIC=general;/Users/hwangjaeseung/workspace/zkp/rapidsnark/depends/gmp/package_macos_arm64/lib/libgmp.a;general;fr;general;fq;
+
+//Dependencies for the target
+rapidsnarkStatic_LIB_DEPENDS:STATIC=general;/Users/hwangjaeseung/workspace/zkp/rapidsnark/depends/gmp/package_macos_arm64/lib/libgmp.a;general;fr;general;fq;
+
+//Value Computed by CMake
+rapidsnark_BINARY_DIR:STATIC=/Users/hwangjaeseung/workspace/zkp/rapidsnark
+
+//Value Computed by CMake
+rapidsnark_IS_TOP_LEVEL:STATIC=ON
+
+//Dependencies for the target
+rapidsnark_LIB_DEPENDS:STATIC=general;/Users/hwangjaeseung/workspace/zkp/rapidsnark/depends/gmp/package_macos_arm64/lib/libgmp.a;general;fr;general;fq;
+
+//Value Computed by CMake
+rapidsnark_SOURCE_DIR:STATIC=/Users/hwangjaeseung/workspace/zkp/rapidsnark
 
 
 ########################
@@ -255,6 +312,19 @@ pistache_static_LIB_DEPENDS:STATIC=general;Threads::Threads;
 CMAKE_ADDR2LINE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_AR
 CMAKE_AR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_ASM_COMPILER
+CMAKE_ASM_COMPILER-ADVANCED:INTERNAL=1
+CMAKE_ASM_COMPILER_WORKS:INTERNAL=1
+//ADVANCED property for variable: CMAKE_ASM_FLAGS
+CMAKE_ASM_FLAGS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_ASM_FLAGS_DEBUG
+CMAKE_ASM_FLAGS_DEBUG-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_ASM_FLAGS_MINSIZEREL
+CMAKE_ASM_FLAGS_MINSIZEREL-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_ASM_FLAGS_RELEASE
+CMAKE_ASM_FLAGS_RELEASE-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_ASM_FLAGS_RELWITHDEBINFO
+CMAKE_ASM_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //This is the directory where this CMakeCache.txt was created
 CMAKE_CACHEFILE_DIR:INTERNAL=/Users/hwangjaeseung/workspace/zkp/rapidsnark
 //Major version of cmake used to create the current loaded cache
@@ -349,7 +419,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=1
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=2
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP
@@ -394,4 +464,10 @@ CMAKE_TAPI-ADVANCED:INTERNAL=1
 CMAKE_UNAME:INTERNAL=/usr/bin/uname
 //ADVANCED property for variable: CMAKE_VERBOSE_MAKEFILE
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
+//Result of TRY_COMPILE
+OpenMP_COMPILE_RESULT_CXX_fopenmp:INTERNAL=FALSE
+//ADVANCED property for variable: OpenMP_CXX_FLAGS
+OpenMP_CXX_FLAGS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: OpenMP_CXX_LIB_NAMES
+OpenMP_CXX_LIB_NAMES-ADVANCED:INTERNAL=1
 
