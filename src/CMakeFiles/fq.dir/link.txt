@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc libfq.a CMakeFiles/fq.dir/__/build/fq.cpp.o CMakeFiles/fq.dir/__/build/fq_raw_arm64.s.o CMakeFiles/fq.dir/__/build/fq_raw_generic.cpp.o CMakeFiles/fq.dir/__/build/fq_generic.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib libfq.a

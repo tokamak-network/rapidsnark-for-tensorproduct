@@ -1,0 +1,43 @@
+file(REMOVE_RECURSE
+  "CMakeFiles/rapidsnarkStaticFrFq.dir/__/build/fq.cpp.o"
+  "CMakeFiles/rapidsnarkStaticFrFq.dir/__/build/fq.cpp.o.d"
+  "CMakeFiles/rapidsnarkStaticFrFq.dir/__/build/fq_generic.cpp.o"
+  "CMakeFiles/rapidsnarkStaticFrFq.dir/__/build/fq_generic.cpp.o.d"
+  "CMakeFiles/rapidsnarkStaticFrFq.dir/__/build/fq_raw_arm64.s.o"
+  "CMakeFiles/rapidsnarkStaticFrFq.dir/__/build/fq_raw_generic.cpp.o"
+  "CMakeFiles/rapidsnarkStaticFrFq.dir/__/build/fq_raw_generic.cpp.o.d"
+  "CMakeFiles/rapidsnarkStaticFrFq.dir/__/build/fr.cpp.o"
+  "CMakeFiles/rapidsnarkStaticFrFq.dir/__/build/fr.cpp.o.d"
+  "CMakeFiles/rapidsnarkStaticFrFq.dir/__/build/fr_generic.cpp.o"
+  "CMakeFiles/rapidsnarkStaticFrFq.dir/__/build/fr_generic.cpp.o.d"
+  "CMakeFiles/rapidsnarkStaticFrFq.dir/__/build/fr_raw_arm64.s.o"
+  "CMakeFiles/rapidsnarkStaticFrFq.dir/__/build/fr_raw_generic.cpp.o"
+  "CMakeFiles/rapidsnarkStaticFrFq.dir/__/build/fr_raw_generic.cpp.o.d"
+  "CMakeFiles/rapidsnarkStaticFrFq.dir/__/depends/ffiasm/c/alt_bn128.cpp.o"
+  "CMakeFiles/rapidsnarkStaticFrFq.dir/__/depends/ffiasm/c/alt_bn128.cpp.o.d"
+  "CMakeFiles/rapidsnarkStaticFrFq.dir/__/depends/ffiasm/c/misc.cpp.o"
+  "CMakeFiles/rapidsnarkStaticFrFq.dir/__/depends/ffiasm/c/misc.cpp.o.d"
+  "CMakeFiles/rapidsnarkStaticFrFq.dir/__/depends/ffiasm/c/naf.cpp.o"
+  "CMakeFiles/rapidsnarkStaticFrFq.dir/__/depends/ffiasm/c/naf.cpp.o.d"
+  "CMakeFiles/rapidsnarkStaticFrFq.dir/__/depends/ffiasm/c/splitparstr.cpp.o"
+  "CMakeFiles/rapidsnarkStaticFrFq.dir/__/depends/ffiasm/c/splitparstr.cpp.o.d"
+  "CMakeFiles/rapidsnarkStaticFrFq.dir/binfile_utils.cpp.o"
+  "CMakeFiles/rapidsnarkStaticFrFq.dir/binfile_utils.cpp.o.d"
+  "CMakeFiles/rapidsnarkStaticFrFq.dir/fileloader.cpp.o"
+  "CMakeFiles/rapidsnarkStaticFrFq.dir/fileloader.cpp.o.d"
+  "CMakeFiles/rapidsnarkStaticFrFq.dir/logger.cpp.o"
+  "CMakeFiles/rapidsnarkStaticFrFq.dir/logger.cpp.o.d"
+  "CMakeFiles/rapidsnarkStaticFrFq.dir/prover.cpp.o"
+  "CMakeFiles/rapidsnarkStaticFrFq.dir/prover.cpp.o.d"
+  "CMakeFiles/rapidsnarkStaticFrFq.dir/wtns_utils.cpp.o"
+  "CMakeFiles/rapidsnarkStaticFrFq.dir/wtns_utils.cpp.o.d"
+  "CMakeFiles/rapidsnarkStaticFrFq.dir/zkey_utils.cpp.o"
+  "CMakeFiles/rapidsnarkStaticFrFq.dir/zkey_utils.cpp.o.d"
+  "librapidsnark-fr-fq.a"
+  "librapidsnark-fr-fq.pdb"
+)
+
+# Per-language clean rules from dependency scanning.
+foreach(lang ASM CXX)
+  include(CMakeFiles/rapidsnarkStaticFrFq.dir/cmake_clean_${lang}.cmake OPTIONAL)
+endforeach()
