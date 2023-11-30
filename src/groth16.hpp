@@ -5,7 +5,6 @@
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
-#include "binfile_utils.hpp"
 #include "fft.hpp"
 
 namespace Groth16 {
@@ -18,7 +17,7 @@ namespace Groth16 {
         typename Engine::G2PointAffine B;
         typename Engine::G1PointAffine C;
 
-        Proof(Engine &_E) : E(_E) { };
+        Proof(Engine &_E) : E(_E) { }
         std::string toJsonStr();
         json toJson();
 
@@ -100,7 +99,7 @@ namespace Groth16 {
             pointsH(_pointsH)
         { 
             fft = new FFT<typename Engine::Fr>(domainSize*2);
-        };
+        }
 
         ~Prover() {
             delete fft;
@@ -133,29 +132,7 @@ namespace Groth16 {
         void *pointsC,
         void *pointsH
     );
-
-    // template <typename Engine>
-    // std::unique_ptr<Prover<Engine>> tensorProduct(void *_array1, void *_arry2);
-
-    // template <typename Engine>
-    // class TensorProduct {
-    //     Engine &E;
-    //     // typename Engine::G1PointAffine &_array1;
-    //     // typename Engine::G1PointAffine &_array2;
-    // public:
-    //     Engine &E;
-    //     typename Engine::FG1PointAffiner &_array1;
-    //     typename Engine::G1PointAffine &_array2;
-    //     typename Engine::FrElement fr;
-
-    //     TensorProduct(
-    //         typename Engine::Fr &_array1,
-    //         typename Engine::Fr &_array2
-    //     ) : fr {};
-        
-    // };
-    // std::unique_ptr<Prover<Engine>> tensorProduct(void *_array1, void *_arry2);
-};
+}
 
 
 #include "groth16.cpp"

@@ -85,6 +85,51 @@ rebuild_cache:
 rebuild_cache/fast: rebuild_cache
 .PHONY : rebuild_cache/fast
 
+# Special rule for the target list_install_components
+list_install_components:
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Available install components are: \"Unspecified\""
+.PHONY : list_install_components
+
+# Special rule for the target list_install_components
+list_install_components/fast: list_install_components
+.PHONY : list_install_components/fast
+
+# Special rule for the target install
+install: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Install the project..."
+	/usr/local/Cellar/cmake/3.27.4/bin/cmake -P cmake_install.cmake
+.PHONY : install
+
+# Special rule for the target install
+install/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Install the project..."
+	/usr/local/Cellar/cmake/3.27.4/bin/cmake -P cmake_install.cmake
+.PHONY : install/fast
+
+# Special rule for the target install/local
+install/local: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing only the local directory..."
+	/usr/local/Cellar/cmake/3.27.4/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local
+
+# Special rule for the target install/local
+install/local/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing only the local directory..."
+	/usr/local/Cellar/cmake/3.27.4/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local/fast
+
+# Special rule for the target install/strip
+install/strip: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing the project stripped..."
+	/usr/local/Cellar/cmake/3.27.4/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip
+
+# Special rule for the target install/strip
+install/strip/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing the project stripped..."
+	/usr/local/Cellar/cmake/3.27.4/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip/fast
+
 # The main all target
 all: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/hwangjaeseung/workspace/zkp/rapidsnark/CMakeFiles /Users/hwangjaeseung/workspace/zkp/rapidsnark//CMakeFiles/progress.marks
@@ -116,6 +161,97 @@ depend:
 	$(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
+#=============================================================================
+# Target rules for targets named fr
+
+# Build rule for target.
+fr: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 fr
+.PHONY : fr
+
+# fast build rule for target.
+fr/fast:
+	$(MAKE) $(MAKESILENT) -f src/CMakeFiles/fr.dir/build.make src/CMakeFiles/fr.dir/build
+.PHONY : fr/fast
+
+#=============================================================================
+# Target rules for targets named fq
+
+# Build rule for target.
+fq: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 fq
+.PHONY : fq
+
+# fast build rule for target.
+fq/fast:
+	$(MAKE) $(MAKESILENT) -f src/CMakeFiles/fq.dir/build.make src/CMakeFiles/fq.dir/build
+.PHONY : fq/fast
+
+#=============================================================================
+# Target rules for targets named rapidsnarkStatic
+
+# Build rule for target.
+rapidsnarkStatic: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 rapidsnarkStatic
+.PHONY : rapidsnarkStatic
+
+# fast build rule for target.
+rapidsnarkStatic/fast:
+	$(MAKE) $(MAKESILENT) -f src/CMakeFiles/rapidsnarkStatic.dir/build.make src/CMakeFiles/rapidsnarkStatic.dir/build
+.PHONY : rapidsnarkStatic/fast
+
+#=============================================================================
+# Target rules for targets named rapidsnarkStaticFrFq
+
+# Build rule for target.
+rapidsnarkStaticFrFq: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 rapidsnarkStaticFrFq
+.PHONY : rapidsnarkStaticFrFq
+
+# fast build rule for target.
+rapidsnarkStaticFrFq/fast:
+	$(MAKE) $(MAKESILENT) -f src/CMakeFiles/rapidsnarkStaticFrFq.dir/build.make src/CMakeFiles/rapidsnarkStaticFrFq.dir/build
+.PHONY : rapidsnarkStaticFrFq/fast
+
+#=============================================================================
+# Target rules for targets named prover
+
+# Build rule for target.
+prover: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 prover
+.PHONY : prover
+
+# fast build rule for target.
+prover/fast:
+	$(MAKE) $(MAKESILENT) -f src/CMakeFiles/prover.dir/build.make src/CMakeFiles/prover.dir/build
+.PHONY : prover/fast
+
+#=============================================================================
+# Target rules for targets named rapidsnark
+
+# Build rule for target.
+rapidsnark: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 rapidsnark
+.PHONY : rapidsnark
+
+# fast build rule for target.
+rapidsnark/fast:
+	$(MAKE) $(MAKESILENT) -f src/CMakeFiles/rapidsnark.dir/build.make src/CMakeFiles/rapidsnark.dir/build
+.PHONY : rapidsnark/fast
+
+#=============================================================================
+# Target rules for targets named test_prover
+
+# Build rule for target.
+test_prover: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_prover
+.PHONY : test_prover
+
+# fast build rule for target.
+test_prover/fast:
+	$(MAKE) $(MAKESILENT) -f src/CMakeFiles/test_prover.dir/build.make src/CMakeFiles/test_prover.dir/build
+.PHONY : test_prover/fast
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -123,7 +259,18 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... edit_cache"
+	@echo "... install"
+	@echo "... install/local"
+	@echo "... install/strip"
+	@echo "... list_install_components"
 	@echo "... rebuild_cache"
+	@echo "... fq"
+	@echo "... fr"
+	@echo "... prover"
+	@echo "... rapidsnark"
+	@echo "... rapidsnarkStatic"
+	@echo "... rapidsnarkStaticFrFq"
+	@echo "... test_prover"
 .PHONY : help
 
 

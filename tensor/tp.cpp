@@ -1,37 +1,44 @@
-
-// #include <alt_bn128.hpp>
 #include "tp.hpp"
+#include <stdio.h>
+#include <stdlib.h>
+#include <assert.h>
+#include "fr.hpp"
 
 void tensorProduct(
-    typename AltBn128::Engine::FrElement *_array1, 
-    typename AltBn128::Engine::FrElement *_array2,
-    u_int32_t array1_size,
-    u_int32_t array2_size
+    int arr1[1024][1][32],
+    int arr2[1][32][32],
+    int arr1_size,
+    int arr2_size
 ) {
-    AltBn128::Engine E;
-    typename AltBn128::Engine::FrElement coef;
-    // E.fr.copy(coef, E.fr.zero());
+    Fr_init();
+    
+    int array1[arr1_size - 1][32];
+    int array2[arr2_size - 1][32];
 
-    typename AltBn128::Engine::FrElement product;
-    #pragma omp parallel for
-    for (u_int64_t i = 0; i < array1_size; i++) {
-        // for (size_t j = 0; j < array2_size; j++) {
-            // E.fr.mul(product[i][j], _array2[0][j], _array1[i][0]);
-            E.fr.mul(product, _array1[i], _array2);
-        // }
+    FrElement FrArr1[arr1_size - 1];
+    FrElement FrArr2[arr2_size - 1];
+    FrElement product[arr1_size - 1][arr2_size - 1];
+
+    for (int i = 0; i < arr1_size; i ++) {
+        FrArr1[i].type = Fr_LONGMONTGOMERY;
+        FrArr1[i].shortVal = 0;
+        for (int j=0; j<Fr_N64; j++) {
+            FrArr1[i].longVal[j] = arr1[i][0][j];
+        }
     }
 
-    // return product;
-}
+    for (int i = 0; i < arr2_size; i ++) {
+        FrArr2[i].type = Fr_LONGMONTGOMERY;
+        FrArr2[i].shortVal = 0;
+        for (int j=0; j<Fr_N64; j++) {
+            FrArr2[i].longVal[j] = arr2[i][0][j];
+        }
+    }
 
-int main() {
-    u_int32_t const array1_size = 10;
-    u_int32_t const array2_size = 10;
-    AltBn128::FrElement *array1 = new typename AltBn128::Engine::FrElement[array1_size];
-    AltBn128::FrElement *array2 = new typename AltBn128::Engine::FrElement[array2_size];
-
-    // AltBn128::Engine::FrElement result = tensorProduct(array1, array2, array1_size, array2_size);
-    tensorProduct(array1, array2, array1_size, array2_size);
-
-    return 0;
+    #pragma omp parallel for
+    for (int i=0; i < arr1_size; i++) {
+        for (int j=0; j < arr2_size; j++) {
+            Fr_mul(&product[i][j], &FrArr2[j], &FrArr1[i]);
+        }
+    }
 }
