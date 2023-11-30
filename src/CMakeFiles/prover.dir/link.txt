@@ -1,0 +1,1 @@
+/usr/local/bin/g++-6  -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/prover.dir/main_prover.cpp.o -o prover  ../depends/gmp/package_macos_arm64/lib/libgmp.a libfr.a libfq.a librapidsnark.a libfq.a libfr.a ../depends/gmp/package_macos_arm64/lib/libgmp.a 
