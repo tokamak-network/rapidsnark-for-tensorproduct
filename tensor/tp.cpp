@@ -41,4 +41,8 @@ void tensorProduct(
             Fr_mul(&product[i][j], &FrArr2[j], &FrArr1[i]);
         }
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> defba619ac119d3c843aeef9d86613e6a1299e10

@@ -79,7 +79,7 @@ namespace Groth16 {
             typename Engine::G1PointAffine *_pointsB1,
             typename Engine::G2PointAffine *_pointsB2,
             typename Engine::G1PointAffine *_pointsC,
-            typename Engine::G1PointAffine *_pointsH,
+            typename Engine::G1PointAffine *_pointsH
         ) : 
             E(_E), 
             nVars(_nVars),
