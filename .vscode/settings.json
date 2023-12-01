@@ -104,7 +104,8 @@
         "any": "cpp",
         "codecvt": "cpp",
         "semaphore": "cpp",
-        "stop_token": "cpp"
+        "stop_token": "cpp",
+        "assert.h": "c"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }
