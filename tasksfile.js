@@ -55,7 +55,7 @@ function buildProverServer() {
         " fr.o"+
         " -L../depends/pistache/build/src -lpistache"+
         " -o proverServer"+
-        " -pthread -std=c++17 -fopenmp -lgmp -lsodium -g -DSANITY_CHECK", {cwd: "build", nopipe: true}
+        " -pthread -std=c++17  -lgmp -lsodium -g -DSANITY_CHECK", {cwd: "build", nopipe: true}
     );
 }
 
@@ -65,7 +65,9 @@ function buildProver() {
         " -I."+
         " -I../src"+
         " -I../depends/ffiasm/c"+
+        // " -I /usr/local/Cellar/gmp/6.2.1_1/include"+
         " -I../depends/json/single_include"+
+        // " -I /usr/local/Cellar/libsodium/1.0.18_1/include" +
         " ../src/main_prover.cpp"+
         " ../src/binfile_utils.cpp"+
         " ../src/zkey_utils.cpp"+
@@ -85,6 +87,30 @@ function buildProver() {
 }
 
 function buildTensorProduct() {
+    sh("g++" +
+        " -I."+
+        " -I../src"+
+        " -I../depends/ffiasm/c"+
+        // " -I../depends/json/single_include"+
+        " ../src/tensor_product.cpp"+
+        // " ../src/binfile_utils.cpp"+
+        // " ../src/zkey_utils.cpp"+
+        // " ../src/wtns_utils.cpp"+
+        // " ../src/logger.cpp"+
+        " ../depends/ffiasm/c/misc.cpp"+
+        " ../depends/ffiasm/c/naf.cpp"+
+        " ../depends/ffiasm/c/splitparstr.cpp"+
+        " ../depends/ffiasm/c/alt_bn128.cpp"+
+        " fq.cpp"+
+        " fq.o"+
+        " fr.cpp"+
+        " fr.o"+
+        " -o tensorProduct" +
+        " -fmax-errors=5 -std=c++17 -pthread -lgmp -lsodium -O3 ", {cwd: "build", nopipe: true}
+    );
+}
+
+// function buildTensorProduct() {
     // sh("g++-13" +
     //    " -fopenmp" +
     //    " ../src/tensor_product.cpp" +
@@ -94,8 +120,8 @@ function buildTensorProduct() {
     //    " -I."+
     //    " -I../src"
     // )
-    sh("g++-13 -fopenmp src/tensor_product.cpp -I../depends/json/single_include -I /usr/local/Cellar/nlohmann-json/3.11.2/include -I ./depends/ffiasm/c -I /usr/local/Cellar/libsodium/1.0.18_1/include")
-}
+    // sh("g++-13 -fopenmp src/tensor_product.cpp -I../depends/json/single_include -I /usr/local/Cellar/nlohmann-json/3.11.2/include -I ./depends/ffiasm/c -I /usr/local/Cellar/libsodium/1.0.18_1/include")
+// }
 
 
 cli({
