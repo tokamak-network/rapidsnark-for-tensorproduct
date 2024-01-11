@@ -11,8 +11,8 @@ using namespace std;
 // {
   
 void tensorProduct(
-  int arr1[1024][1][32], 
-  int arr2[1][32][32],
+  int arr1[1024][1], 
+  int arr2[1][32],
   int arr1_size,
   int arr2_size
 );

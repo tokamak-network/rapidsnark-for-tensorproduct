@@ -73,23 +73,15 @@ std::unique_ptr<Proof<Engine>> Prover<Engine>::prove(typename Engine::FrElement 
     auto b = new typename Engine::FrElement[domainSize];
     auto c = new typename Engine::FrElement[domainSize];
 
-    auto d = new typename Engine::FrElement[4];
-    auto e = new typename Engine::FrElement[4];
-    auto f = new typename Engine::FrElement[4];
-
-    for (u_int32_t i=0; i<domainSize; i++) {
-        // E.fr.copy(d[i], E.fr.toMontgomery(1));
-        E.fr.copy(e[i], 2);
-        
-    }
+    auto d = new typename Engine::FrElement[1024];
+    auto e = new typename Engine::FrElement[1024];
+    auto f = new typename Engine::FrElement[1024];
 
     #pragma omp parallel for
     for (u_int32_t i=0; i<domainSize; i++) {
         E.fr.copy(a[i], E.fr.zero());
         E.fr.copy(b[i], E.fr.zero());
-        printf("%lu \n", a[i]);
     }
-    printf("%s\n", E.fr.toString(a[0]).c_str());
 
     LOG_TRACE("Processing coefs");
     #define NLOCKS 1024
@@ -125,6 +117,16 @@ std::unique_ptr<Proof<Engine>> Prover<Engine>::prove(typename Engine::FrElement 
             a[i],
             b[i]
         );
+    }
+
+    for (u_int32_t i=0; i<1024; i++) {
+        for (u_int32_t j=0; j<32; j++ ){
+            E.fr.mul(
+                c[i],
+                a[i],
+                b[j]
+            );
+        }
     }
 
     LOG_TRACE("Initializing fft");
