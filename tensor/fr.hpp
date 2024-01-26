@@ -21,7 +21,7 @@ extern FrElement Fr_R3;
 extern FrRawElement Fr_rawq;
 extern FrRawElement Fr_rawR3;
 
-bool Fr_init();
+extern "C" bool Fr_init();
 extern "C" void Fr_copy(PFrElement r, PFrElement a);
 extern "C" void Fr_copyn(PFrElement r, PFrElement a, int n);
 extern "C" void Fr_add(PFrElement r, PFrElement a, PFrElement b);
