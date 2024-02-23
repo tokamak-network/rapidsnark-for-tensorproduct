@@ -37,14 +37,11 @@
         global Fq_rawSub
         global Fq_rawNeg
         global Fq_rawMMul
-        global Fq_rawMMul1
         global Fq_rawMSquare
         global Fq_rawToMontgomery
         global Fq_rawFromMontgomery
         global Fq_rawIsEq
         global Fq_rawIsZero
-        global Fq_rawShr
-        global Fq_rawShl
         global Fq_rawq
         global Fq_rawR3
 
@@ -287,12 +284,15 @@ Fq_long:
         jnc     Fq_longNormal
 Fq_longMontgomery:
 
+        mov  r8, rdi
         sub  rsp, 40
-        push rsi
-        mov  rsi, rdi
         mov  rdi, rsp
+        push rdx
+        push r8
         call Fq_toNormal
-        pop  rsi
+        mov  rsi, rdi
+        pop  rdi
+        pop  rdx
 
 
 Fq_longNormal:
@@ -349,11 +349,7 @@ Fq_longNeg:
 Fq_longErr:
         push    rdi
         mov     rdi, 0
-%ifdef PIC
-        call    Fq_fail WRT ..plt
-%else
         call    Fq_fail
-%endif
         pop     rdi
         mov rsp, rbp
         pop rdx
@@ -6545,7 +6541,6 @@ tmp_107:
 ; Modified Registers:
 ;    r8, r9, 10, r11, rax, rcx
 ;;;;;;;;;;;;;;;;;;;;;;
-Fq_rawShr:
 rawShr:
         cmp rdx, 0
         je Fq_rawCopy
@@ -6746,7 +6741,6 @@ rawShr_endif3_3:
 ; Modified Registers:
 ;    r8, r9, 10, r11, rax, rcx
 ;;;;;;;;;;;;;;;;;;;;;;
-Fq_rawShl:
 rawShl:
         cmp rdx, 0
         je Fq_rawCopy
