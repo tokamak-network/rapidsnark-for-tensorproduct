@@ -119,16 +119,6 @@ std::unique_ptr<Proof<Engine>> Prover<Engine>::prove(typename Engine::FrElement 
         );
     }
 
-    for (u_int32_t i=0; i<1024; i++) {
-        for (u_int32_t j=0; j<32; j++ ){
-            E.fr.mul(
-                c[i],
-                a[i],
-                b[j]
-            );
-        }
-    }
-
     LOG_TRACE("Initializing fft");
     u_int32_t domainPower = fft->log2(domainSize);
 
