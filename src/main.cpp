@@ -34,29 +34,18 @@ int main(int argc, char **argv) {
 
         char proofBuffer[BufferSize];
         auto zkey = BinFileUtils::openExisting(zkeyFilename, "zkey", 1);
-        //auto zkeyHeader = ZKeyUtils::loadHeader(zkey.get());
 
         auto zkey1 = BinFileUtils::openExisting(zkey1Filename, "zkey", 1);
-        //auto zkeyHeader1 = ZKeyUtils::loadHeader(zkey.get());
-
-        //if (mpz_cmp(zkeyHeader->rPrime, altBbn128r) != 0) {
-        //    throw std::invalid_argument( "zkey curve not supported" );
-        //}
-
-        //if (mpz_cmp(zkeyHeader1->rPrime, altBbn128r) != 0) {
-        //    throw std::invalid_argument( "zkey curve not supported" );
-        //}
-
 
         FrElement *fYK = (FrElement *)zkey->getSectionData(2);
         FrElement *scaled = (FrElement *)zkey1->getSectionData(2);
-        FrElement c;
+        FrElement product;
 
         #pragma omp parallel for
         for (u_int64_t i=0; i<1024; i++) {
             for (u_int64_t j=0; j<32; j++ ){
                 Fr_mul(
-                    &c,
+                    &product,
                     &fYK[j],
                     &scaled[i]
                 );
