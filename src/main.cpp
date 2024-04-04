@@ -62,7 +62,7 @@ int main(int argc, char **argv) {
                 );
                 x.push_back(products)
             }
-            jsonResult.push_back(x);
+            jsonResult.push_back(AltBn128::Fr.toString(products));
         }
         clock_t end = clock();
         std::cout <<"time duration for whole: "<< double(end - start) / CLOCKS_PER_SEC <<"\n";
