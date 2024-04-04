@@ -49,18 +49,20 @@ int main(int argc, char **argv) {
         AltBn128::FrElement products;
 
         clock_t start = clock();
-        omp_set_dynamic(0);     // Explicitly disable dynamic teams
+        omp_set_dynamic(0);   
         omp_set_num_threads(4);
         #pragma omp parallel for
         for (u_int64_t i=0; i<1024; i++) {
+            json x;
             for (u_int64_t j=0; j<32; j++ ){
                 AltBn128::Fr.mul(
                     products,
                     fYK[j],
                     scaled[i]
                 );
-                jsonResult[std::to_string(i)][std::to_string(j)] = AltBn128::Fr.toString(products);
+                x.push_back(products)
             }
+            jsonResult.push_back(x);
         }
         clock_t end = clock();
         std::cout <<"time duration for whole: "<< double(end - start) / CLOCKS_PER_SEC <<"\n";
