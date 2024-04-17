@@ -30,8 +30,6 @@ int main(int argc, char **argv) {
     mpz_t altBbn128r;
     json jsonResult;
 
-    // RawFr& fr = RawFr::field;
-
     mpz_init(altBbn128r);
     mpz_set_str(altBbn128r, "21888242871839275222246405745257275088548364400416034343698204186575808495617", 10);
     try {
@@ -47,13 +45,13 @@ int main(int argc, char **argv) {
         AltBn128::FrElement products;
 
         clock_t start = clock();
-        omp_set_dynamic(0);   
-        omp_set_num_threads(4);
+        // omp_set_dynamic(0);   
+        // omp_set_num_threads(4);
         #pragma omp parallel for
-        for (u_int64_t i=0; i<1024; i++) {
+        for (u_int64_t i=0; i < NUM_ROWS; i++) {
             json x;
             AltBn128::FrElement auxProduct;
-            for (u_int64_t j=0; j<32; j++ ){
+            for (u_int64_t j=0; j < NUM_COLS; j++ ){
                 AltBn128::Fr.mul(
                     products,
                     scaled[i],
