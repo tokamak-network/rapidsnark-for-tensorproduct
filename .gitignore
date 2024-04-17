@@ -71,6 +71,7 @@ CMakeLists.txt.user
 
 depends/gmp*
 
+build
 build_*
 package*
 
