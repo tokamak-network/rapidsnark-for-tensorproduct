@@ -19,56 +19,52 @@
 #define handle_error(msg) \
            do { perror(msg); exit(EXIT_FAILURE); } while (0)
 
-using json = nlohmann::json;
-using std::ofstream;
 
 const size_t BufferSize = 16384;
-const size_t NUM_ROWS = 1024;
-const size_t NUM_COLS = 32;
 
 int main(int argc, char **argv) {
+
     mpz_t altBbn128r;
-    json jsonResult;
 
     mpz_init(altBbn128r);
     mpz_set_str(altBbn128r, "21888242871839275222246405745257275088548364400416034343698204186575808495617", 10);
     try {
         std::string zkeyFilename = argv[1];
         std::string zkey1Filename = argv[2];
-        std::string outputFilename = argv[3];
 
+        char proofBuffer[BufferSize];
         auto zkey = BinFileUtils::openExisting(zkeyFilename, "zkey", 1);
-        auto zkey1 = BinFileUtils::openExisting(zkey1Filename, "zkey", 1);
+        auto zkeyHeader = ZKeyUtils::loadHeader(zkey.get());
 
-        AltBn128::FrElement *scaled = (AltBn128::FrElement *)zkey->getSectionData(2);
-        AltBn128::FrElement *fYK = (AltBn128::FrElement *)zkey1->getSectionData(2);
-        AltBn128::FrElement products;
+        auto zkey1 = BinFileUtils::openExisting(zkey1Filename, "zkey", 1);
+        auto zkeyHeader1 = ZKeyUtils::loadHeader(zkey.get());
+
+        if (mpz_cmp(zkeyHeader->rPrime, altBbn128r) != 0) {
+            throw std::invalid_argument( "zkey curve not supported" );
+        }
+
+        if (mpz_cmp(zkeyHeader1->rPrime, altBbn128r) != 0) {
+            throw std::invalid_argument( "zkey curve not supported" );
+        }
+
+
+        FrElement *fYK = (FrElement *)zkey->getSectionData(4);
+        FrElement *scaled = (FrElement *)zkey1->getSectionData(4);
+        FrElement c;
 
         clock_t start = clock();
-        // omp_set_dynamic(0);   
-        // omp_set_num_threads(4);
         #pragma omp parallel for
-        for (u_int64_t i=0; i < NUM_ROWS; i++) {
-            json x;
-            AltBn128::FrElement auxProduct;
-            for (u_int64_t j=0; j < NUM_COLS; j++ ){
-                AltBn128::Fr.mul(
-                    products,
-                    scaled[i],
-                    fYK[j]
+        for (u_int64_t i=0; i<1024; i++) {
+            for (u_int64_t j=0; j<32; j++ ){
+                Fr_mul(
+                    &c,
+                    &fYK[j],
+                    &scaled[i]
                 );
-                AltBn128::Fr.toMontgomery(auxProduct, products);
-                x.push_back(AltBn128::Fr.toString(auxProduct));
             }
-            jsonResult.push_back(x);
-
         }
         clock_t end = clock();
         std::cout <<"time duration for whole: "<< double(end - start) / CLOCKS_PER_SEC <<"\n";
-
-        ofstream outputFile(outputFilename);
-        outputFile << jsonResult.dump(4);
-        outputFile.close();
 
     } catch (std::exception* e) {
         mpz_clear(altBbn128r);
