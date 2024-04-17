@@ -37,15 +37,13 @@ int main(int argc, char **argv) {
     try {
         std::string zkeyFilename = argv[1];
         std::string zkey1Filename = argv[2];
+        std::string outputFilename = argv[3];
 
-        char proofBuffer[BufferSize];
         auto zkey = BinFileUtils::openExisting(zkeyFilename, "zkey", 1);
-
         auto zkey1 = BinFileUtils::openExisting(zkey1Filename, "zkey", 1);
 
-        AltBn128::FrElement *fYK = (AltBn128::FrElement *)zkey->getSectionData(2);
-        AltBn128::FrElement *scaled = (AltBn128::FrElement *)zkey1->getSectionData(2);
-        // std::vector<std::vector<AltBn128::FrElement>> products(NUM_ROWS, std::vector<AltBn128::FrElement>(NUM_COLS));
+        AltBn128::FrElement *scaled = (AltBn128::FrElement *)zkey->getSectionData(2);
+        AltBn128::FrElement *fYK = (AltBn128::FrElement *)zkey1->getSectionData(2);
         AltBn128::FrElement products;
 
         clock_t start = clock();
@@ -54,25 +52,22 @@ int main(int argc, char **argv) {
         #pragma omp parallel for
         for (u_int64_t i=0; i<1024; i++) {
             json x;
+            AltBn128::FrElement auxProduct;
             for (u_int64_t j=0; j<32; j++ ){
                 AltBn128::Fr.mul(
                     products,
-                    fYK[j],
-                    scaled[i]
+                    scaled[i],
+                    fYK[j]
                 );
-                x.push_back(products)
+                AltBn128::Fr.toMontgomery(auxProduct, products);
+                x.push_back(AltBn128::Fr.toString(auxProduct));
             }
-            jsonResult.push_back(AltBn128::Fr.toString(products));
+            jsonResult.push_back(x);
         }
         clock_t end = clock();
         std::cout <<"time duration for whole: "<< double(end - start) / CLOCKS_PER_SEC <<"\n";
-        AltBn128::FrElement a;
-        AltBn128::Fr.mul(a,fYK[0],scaled[0]);
-        printf("%s \n", AltBn128::Fr.toString(a).c_str());
-        printf("%s \n", AltBn128::Fr.toString(fYK[0]).c_str());
-        printf("%s \n", AltBn128::Fr.toString(scaled[0]).c_str());
 
-        ofstream outputFile("products.json");
+        ofstream outputFile(outputFilename);
         outputFile << jsonResult.dump(4);
         outputFile.close();
 
