@@ -38,6 +38,11 @@ void test_tensorproduct () {
   AltBn128::Fr.fromString(sample2[2], "9163953212624378696742080269971059027061360176019470242548968584908855004282");
   AltBn128::Fr.fromString(sample2[3], "20922060990592511838374895951081914567856345629513259026540392951012456141360");
 
+  for (int i = 0; i < SIZE; ++i) {
+    AltBn128::Fr.fromMontgomery(sample1[i], sample1[i]);
+    AltBn128::Fr.fromMontgomery(sample2[i], sample2[i]);
+  }
+
   std::vector<std::vector<AltBn128::FrElement>> vector1, vector2;
   
   for (int i = 0; i < SIZE; ++i) {
