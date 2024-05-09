@@ -91,12 +91,12 @@ function buildTensorProduct() {
         " -I."+
         " -I../src"+
         " -I../depends/ffiasm/c"+
-        // " -I../depends/json/single_include"+
-        " ../src/tensor_product.cpp"+
-        // " ../src/binfile_utils.cpp"+
-        // " ../src/zkey_utils.cpp"+
-        // " ../src/wtns_utils.cpp"+
-        // " ../src/logger.cpp"+
+        " -I../depends/json/single_include"+
+        " ../src/main.cpp"+
+        " ../src/logger.cpp"+
+        " ../src/binfile_utils.cpp"+
+        " ../src/zkey_utils.cpp"+
+        " ../src/wtns_utils.cpp"+
         " ../depends/ffiasm/c/misc.cpp"+
         " ../depends/ffiasm/c/naf.cpp"+
         " ../depends/ffiasm/c/splitparstr.cpp"+
@@ -110,19 +110,30 @@ function buildTensorProduct() {
     );
 }
 
-// function buildTensorProduct() {
-    // sh("g++-13" +
-    //    " -fopenmp" +
-    //    " ../src/tensor_product.cpp" +
-    //    " -I /usr/local/Cellar/nlohmann-json/3.11.2/include" +
-    //    " -I../depends/ffiasm/c" +
-    //    " -I /usr/local/Cellar/libsodium/1.0.18_1/include" +
-    //    " -I."+
-    //    " -I../src"
-    // )
-    // sh("g++-13 -fopenmp src/tensor_product.cpp -I../depends/json/single_include -I /usr/local/Cellar/nlohmann-json/3.11.2/include -I ./depends/ffiasm/c -I /usr/local/Cellar/libsodium/1.0.18_1/include")
-// }
-
+function testPoly() {
+    sh("g++" +
+        " -I."+
+        " -I../src"+
+        " -I../depends/ffiasm/c"+
+        " -I../depends/json/single_include"+
+        " ../src/test_polyutils.cpp"+
+        // " ../src/logger.cpp"+
+        // " ../src/binfile_utils.cpp"+
+        // " ../src/zkey_utils.cpp"+
+        // " ../src/wtns_utils.cpp"+
+        " ../src/poly_utils.cpp"+
+        " ../depends/ffiasm/c/misc.cpp"+
+        " ../depends/ffiasm/c/naf.cpp"+
+        " ../depends/ffiasm/c/splitparstr.cpp"+
+        " ../depends/ffiasm/c/alt_bn128.cpp"+
+        " fq.cpp"+
+        " fq.o"+
+        " fr.cpp"+
+        " fr.o"+
+        " -o testPoly" +
+        " -fmax-errors=5 -std=c++17 -pthread -lgmp -lsodium -O3 ", {cwd: "build", nopipe: true}
+    );
+}
 
 cli({
     cleanAll,
@@ -130,5 +141,6 @@ cli({
     buildPistache,
     buildProverServer,
     buildProver,
-    buildTensorProduct
+    buildTensorProduct,
+    testPoly
 });

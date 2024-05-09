@@ -10,9 +10,9 @@ namespace PolyUtils {
   class Poly {
 
   public:
-    void tensorProduct(AltBn128::FrElement *array1, AltBn128::FrElement *array2);
+    std::vector<std::vector<AltBn128::FrElement>> tensorProduct(std::vector<std::vector<AltBn128::FrElement>>& array1, std::vector<std::vector<AltBn128::FrElement>>& array2);
 
-  }
+  };
 
 }
 
