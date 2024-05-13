@@ -10,10 +10,9 @@ namespace PolyUtils {
 
 
 // 두 유한 필드 배열의 텐서 곱을 계산하는 함수
-FrElementMatrix Poly::tensorProduct(
-  FrElementMatrix& array1, 
-  FrElementMatrix& array2
-) {
+template <typename Engine>
+typename Poly<Engine>::FrElementMatrix Poly<Engine>::tensorProduct(FrElementMatrix& array1, FrElementMatrix& array2) {
+
   size_t numRows = array1.size();
   size_t numCols = array2[0].size();
   FrElementMatrix zeroMatrix(1, FrElementVector(1, AltBn128::Fr.zero()));
@@ -37,10 +36,9 @@ FrElementMatrix Poly::tensorProduct(
   return result;
 }
 
-FrElementMatrix Poly::addPoly(
-  FrElementMatrix& poly1,
-  FrElementMatrix& poly2
-) {
+template <typename Engine>
+typename Poly<Engine>::FrElementMatrix Poly<Engine>::addPoly(FrElementMatrix& poly1, FrElementMatrix& poly2) {
+
   size_t numRows = std::max(poly1.size(), poly2.size());
   size_t numCols = 0;
 
@@ -75,10 +73,9 @@ FrElementMatrix Poly::addPoly(
   return result;
 }
 
-FrElementMatrix Poly::mulPoly(
-    FrElementMatrix& poly1,
-    FrElementMatrix& poly2
-) {
+template <typename Engine>
+typename Poly<Engine>::FrElementMatrix Poly<Engine>::mulPoly(FrElementMatrix& poly1, FrElementMatrix& poly2) {
+
     if (poly1.empty() || poly2.empty()) {
         return FrElementMatrix();
     }
@@ -95,13 +92,23 @@ FrElementMatrix Poly::mulPoly(
     // 결과 다항식의 계수를 0으로 초기화
     FrElementMatrix result(resultRows, FrElementVector(resultCols, AltBn128::Fr.zero()));
 
-    // 각 다항식의 계수를 곱하여 결과 다항식의 계수를 계산
+     AltBn128::FrElement temp;
     for (size_t i = 0; i < numRows1; ++i) {
         for (size_t j = 0; j < numCols1; ++j) {
             for (size_t k = 0; k < numRows2; ++k) {
                 for (size_t l = 0; l < numCols2; ++l) {
                     // i+k, j+l 위치에 결과 저장
-                    AltBn128::Fr.mul(result[i + k][j + l], poly1[i][j], poly2[k][l]);
+                    // 결과 배열이 충분히 큰지 확인하고 필요하면 확장
+                    if (i + k >= result.size() || j + l >= result[i + k].size()) {
+                        if (i + k >= result.size()) {
+                            result.resize(i + k + 1);
+                        }
+                        if (j + l >= result[i + k].size()) {
+                            result[i + k].resize(j + l + 1, AltBn128::Fr.zero());
+                        }
+                    }
+                    AltBn128::Fr.mul(temp, poly1[i][j], poly2[k][l]);
+                    AltBn128::Fr.add(result[i + k][j + l], result[i + k][j + l], temp);
                 }
             }
         }
@@ -110,17 +117,21 @@ FrElementMatrix Poly::mulPoly(
     return result;
 }
 
-FrElementMatrix Poly::subPoly(
-    FrElementMatrix& poly1,
-    FrElementMatrix& poly2
-) {
+template <typename Engine>
+typename Poly<Engine>::FrElementMatrix Poly<Engine>::subPoly(FrElementMatrix& poly1, FrElementMatrix& poly2) {
+
     size_t numRows = std::max(poly1.size(), poly2.size());
     size_t numCols = 0;
 
-    if (!poly1.empty()) numCols = std::max(numCols, poly1[0].size());
-    if (!poly2.empty()) numCols = std::max(numCols, poly2[0].size());
+    // 최대 열 길이 계산
+    for (const auto& row : poly1) {
+        if (!row.empty()) numCols = std::max(numCols, row.size());
+    }
+    for (const auto& row : poly2) {
+        if (!row.empty()) numCols = std::max(numCols, row.size());
+    }
 
-    // 결과 다항식의 계수를 0으로 초기화
+    // 결과 다항식의 계수를 초기화
     FrElementMatrix result(numRows, FrElementVector(numCols, AltBn128::Fr.zero()));
 
     // poly1의 계수를 결과에 할당
@@ -129,29 +140,33 @@ FrElementMatrix Poly::subPoly(
             result[i][j] = poly1[i][j];
         }
     }
-
+    printf("%d \n", poly2.size());
+    printf("%d \n", poly2[0].size());
     // poly2의 계수를 결과에서 빼기
     for (size_t i = 0; i < poly2.size(); ++i) {
         for (size_t j = 0; j < poly2[i].size(); ++j) {
             if (i < result.size() && j < result[i].size()) {
                 AltBn128::Fr.sub(result[i][j], result[i][j], poly2[i][j]);
-            } else {
-                // poly2가 poly1보다 큰 경우는 일반적으로 없지만, 처리를 위해
-                if (j >= result[i].size()) {
-                    result[i].resize(j + 1, AltBn128::Fr.zero());
-                }
-                AltBn128::Fr.neg(result[i][j], poly2[i][j]);
-            }
+            } 
+            // else {
+            //     // 필요한 경우 결과 배열의 크기를 늘림
+            //     if (i >= result.size()) {
+            //         result.resize(i + 1);
+            //     }
+            //     if (j >= result[i].size()) {
+            //         result[i].resize(j + 1, AltBn128::Fr.zero());
+            //     }
+            //     AltBn128::Fr.neg(result[i][j], poly2[i][j]); // 이 부분은 poly2[i][j] 값이 0이 아닌 경우에만 호출해야 함
+            // }
         }
     }
 
     return result;
 }
 
-FrElementMatrix Poly::scalePoly(
-    FrElementMatrix& poly, 
-    AltBn128::FrElement& scaler
-) {
+template <typename Engine>
+typename Poly<Engine>::FrElementMatrix Poly<Engine>::scalePoly(FrElementMatrix& poly, typename Engine::FrElement& scaler) {
+
     size_t numRows = poly.size();
     size_t numCols = poly[0].size();
 
@@ -168,6 +183,7 @@ FrElementMatrix Poly::scalePoly(
     return result;
 }
 
+//template <typename Engine>
 // FrElementMatrix Poly::fftMulPoly(
 //     FrElementMatrix& poly1, 
 //     FrElementMatrix& poly2,
@@ -576,5 +592,5 @@ FrElementMatrix Poly::scalePoly(
 // }
 
 
-
+template class PolyUtils::Poly<AltBn128::Engine>;
 }

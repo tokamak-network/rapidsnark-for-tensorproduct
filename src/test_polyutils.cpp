@@ -18,15 +18,16 @@
 
 using json = nlohmann::json;
 using std::ofstream;
+using namespace PolyUtils;
 
-PolyUtils::Poly polyUtil;
+PolyUtils::Poly<AltBn128::Engine> polyUtil;
 const size_t BufferSize = 16384;
 const size_t NUM_ROWS = 1024;
 const size_t NUM_COLS = 32;
 
-void test_tensorproduct (FrElementMatrix vector1, FrElementMatrix vector2) {
+void test_tensorproduct (typename PolyUtils::Poly<AltBn128::Engine>::FrElementMatrix vector1, typename PolyUtils::Poly<AltBn128::Engine>::FrElementMatrix vector2) {
   
-  FrElementMatrix result = polyUtil.tensorProduct(vector1, vector2);
+  auto result = polyUtil.tensorProduct(vector1, vector2);
 
   printf("tensor product test result check start \n\n");
   for (int i = 0; i < 4; i++) {
@@ -40,8 +41,8 @@ void test_tensorproduct (FrElementMatrix vector1, FrElementMatrix vector2) {
   printf("----------------------------------------------------- \n\n");
 }
 
-void test_addpoly (FrElementMatrix vector1, FrElementMatrix vector2) {
-  FrElementMatrix result = polyUtil.addPoly(vector1, vector2);
+void test_addpoly (typename PolyUtils::Poly<AltBn128::Engine>::FrElementMatrix vector1, typename PolyUtils::Poly<AltBn128::Engine>::FrElementMatrix vector2) {
+  auto result = polyUtil.addPoly(vector1, vector2);
 
   printf("add poly test result start \n\n");
   for (int i = 0; i < 4; i++) {
@@ -55,8 +56,8 @@ void test_addpoly (FrElementMatrix vector1, FrElementMatrix vector2) {
   printf("----------------------------------------------------- \n\n");
 }
 
-void test_mulpoly (FrElementMatrix vector1, FrElementMatrix vector2) {
-  FrElementMatrix result = polyUtil.mulPoly(vector1, vector2);
+void test_mulpoly (typename PolyUtils::Poly<AltBn128::Engine>::FrElementMatrix vector1, typename PolyUtils::Poly<AltBn128::Engine>::FrElementMatrix vector2) {
+  auto result = polyUtil.mulPoly(vector1, vector2);
 
   printf("mul poly test result start \n\n");
   for (int i = 0; i < 4; i++) {
@@ -70,8 +71,8 @@ void test_mulpoly (FrElementMatrix vector1, FrElementMatrix vector2) {
   printf("----------------------------------------------------- \n\n");
 }
 
-void test_subpoly (FrElementMatrix vector1, FrElementMatrix vector2) {
-  FrElementMatrix result = polyUtil.subPoly(vector1, vector2);
+void test_subpoly (typename PolyUtils::Poly<AltBn128::Engine>::FrElementMatrix vector1, typename PolyUtils::Poly<AltBn128::Engine>::FrElementMatrix vector2) {
+  auto result = polyUtil.subPoly(vector1, vector2);
 
   printf("sub poly test result start \n\n");
   for (int i = 0; i < 4; i++) {
@@ -100,8 +101,9 @@ void test_subpoly (FrElementMatrix vector1, FrElementMatrix vector2) {
 //   printf("----------------------------------------------------- \n\n");
 // }
 
-void test_scalepoly (FrElementMatrix vector1, AltBn128::FrElement scaler) {
-  FrElementMatrix result = polyUtil.scalePoly(vector1, scaler);
+void test_scalepoly (typename PolyUtils::Poly<AltBn128::Engine>::FrElementMatrix vector1, typename AltBn128::Engine::FrElement scaler) {
+
+  auto result = polyUtil.scalePoly(vector1, scaler);
 
   printf("scale poly test result start \n\n");
   for (int i = 0; i < 4; i++) {
@@ -122,7 +124,9 @@ int main(int argc, char **argv) {
     mpz_init(altBbn128r);
     mpz_set_str(altBbn128r, "21888242871839275222246405745257275088548364400416034343698204186575808495617", 10);
     try {
-      // fft = new FFT<typename Engine::Fr>(1024*2);
+      // fft = new FFT<typename AltBn128::Engine::Fr>(1024*2);
+      Poly<AltBn128::Engine> polyUtil;
+      typedef Poly<AltBn128::Engine>::FrElementMatrix FrElementMatrix;
       int SIZE = 4;
       AltBn128::FrElement *sample1 = new AltBn128::FrElement[SIZE];
       AltBn128::FrElement *sample2 = new AltBn128::FrElement[SIZE];
