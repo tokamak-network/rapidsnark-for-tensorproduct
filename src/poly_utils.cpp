@@ -3,79 +3,74 @@
 #include <memory.h>
 #include <stdexcept>
 #include <alt_bn128.hpp>
-
 #include "poly_utils.hpp"
+#include <cmath>  // cmath 헤더를 포함하여 수학 함수를 사용
 
 namespace PolyUtils {
 
-
-// 두 유한 필드 배열의 텐서 곱을 계산하는 함수
 template <typename Engine>
 typename Poly<Engine>::FrElementMatrix Poly<Engine>::tensorProduct(FrElementMatrix& array1, FrElementMatrix& array2) {
+    size_t numRows = array1.size();
+    size_t numCols = array2[0].size();
+    FrElementMatrix zeroMatrix(1, FrElementVector(1, AltBn128::Fr.zero()));
 
-  size_t numRows = array1.size();
-  size_t numCols = array2[0].size();
-  FrElementMatrix zeroMatrix(1, FrElementVector(1, AltBn128::Fr.zero()));
-
-  if (numRows == 1) {
-    return zeroMatrix;
-  }
-
-  if (numCols == 1) {
-    return zeroMatrix;
-  }
-
-  FrElementMatrix result(numRows, FrElementVector(numCols));
-
-  for (size_t i = 0; i < numRows; ++i) {
-    for (size_t j = 0; j < numCols; ++j) {
-      AltBn128::Fr.mul(result[i][j], array1[i][0], array2[0][j]);
+    if (numRows == 1) {
+        return zeroMatrix;
     }
-  }
 
-  return result;
+    if (numCols == 1) {
+        return zeroMatrix;
+    }
+
+    FrElementMatrix result(numRows, FrElementVector(numCols));
+
+    for (size_t i = 0; i < numRows; ++i) {
+        for (size_t j = 0; j < numCols; ++j) {
+            AltBn128::Fr.mul(result[i][j], array1[i][0], array2[0][j]);
+        }
+    }
+
+    return result;
 }
 
 template <typename Engine>
 typename Poly<Engine>::FrElementMatrix Poly<Engine>::addPoly(FrElementMatrix& poly1, FrElementMatrix& poly2) {
+    size_t numRows = std::max(poly1.size(), poly2.size());
+    size_t numCols = 0;
 
-  size_t numRows = std::max(poly1.size(), poly2.size());
-  size_t numCols = 0;
+    if (!poly1.empty()) numCols = std::max(numCols, poly1[0].size());
+    if (!poly2.empty()) numCols = std::max(numCols, poly2[0].size());
 
-  if (!poly1.empty()) numCols = std::max(numCols, poly1[0].size());
-  if (!poly2.empty()) numCols = std::max(numCols, poly2[0].size());
+    FrElementMatrix result(numRows, FrElementVector(numCols, AltBn128::Fr.zero()));
 
-  FrElementMatrix result(numRows, FrElementVector(numCols, AltBn128::Fr.zero()));
-
-  // Add poly1 to the result
-  for (size_t i = 0; i < poly1.size(); ++i) {
-    for (size_t j = 0; j < poly1[i].size(); ++j) {
-      result[i][j] = poly1[i][j];  // Direct assignment first
-    }
-  }
-
-  // Add poly2 to the result
-  for (size_t i = 0; i < poly2.size(); ++i) {
-    for (size_t j = 0; j < poly2[i].size(); ++j) {
-      if (i < result.size() && j < result[i].size()) {
-        AltBn128::Fr.add(result[i][j], poly1[i][j], poly2[i][j]);
-      } else {
-        // Should resize internally if poly2 is larger, which is rare
-        // Assuming rows exist but need more columns
-        if (j >= result[i].size()) {
-            result[i].resize(j + 1, AltBn128::Fr.zero());
+    // Add poly1 to the result
+    for (size_t i = 0; i < poly1.size(); ++i) {
+        for (size_t j = 0; j < poly1[i].size(); ++j) {
+            result[i][j] = poly1[i][j];  // Direct assignment first
         }
-        result[i][j] = poly2[i][j];
-      }
     }
-  }
 
-  return result;
+    // Add poly2 to the result
+    for (size_t i = 0; i < poly2.size(); ++i) {
+        for (size_t j = 0; j < poly2[i].size(); ++j) {
+            if (i < result.size() && j < result[i].size()) {
+                AltBn128::Fr.add(result[i][j], poly1[i][j], poly2[i][j]);
+            } else {
+                // Should resize internally if poly2 is larger, which is rare
+                // Assuming rows exist but need more columns
+                if (j >= result[i].size()) {
+                    result[i].resize(j + 1, AltBn128::Fr.zero());
+                }
+                result[i][j] = poly2[i][j];
+            }
+        }
+    }
+
+    return result;
 }
 
 template <typename Engine>
 typename Poly<Engine>::FrElementMatrix Poly<Engine>::mulPoly(FrElementMatrix& poly1, FrElementMatrix& poly2) {
-
     if (poly1.empty() || poly2.empty()) {
         return FrElementMatrix();
     }
@@ -92,7 +87,7 @@ typename Poly<Engine>::FrElementMatrix Poly<Engine>::mulPoly(FrElementMatrix& po
     // 결과 다항식의 계수를 0으로 초기화
     FrElementMatrix result(resultRows, FrElementVector(resultCols, AltBn128::Fr.zero()));
 
-     AltBn128::FrElement temp;
+    typename Engine::FrElement temp;
     for (size_t i = 0; i < numRows1; ++i) {
         for (size_t j = 0; j < numCols1; ++j) {
             for (size_t k = 0; k < numRows2; ++k) {
@@ -119,7 +114,6 @@ typename Poly<Engine>::FrElementMatrix Poly<Engine>::mulPoly(FrElementMatrix& po
 
 template <typename Engine>
 typename Poly<Engine>::FrElementMatrix Poly<Engine>::subPoly(FrElementMatrix& poly1, FrElementMatrix& poly2) {
-
     size_t numRows = std::max(poly1.size(), poly2.size());
     size_t numCols = 0;
 
@@ -146,17 +140,7 @@ typename Poly<Engine>::FrElementMatrix Poly<Engine>::subPoly(FrElementMatrix& po
         for (size_t j = 0; j < poly2[i].size(); ++j) {
             if (i < result.size() && j < result[i].size()) {
                 AltBn128::Fr.sub(result[i][j], result[i][j], poly2[i][j]);
-            } 
-            // else {
-            //     // 필요한 경우 결과 배열의 크기를 늘림
-            //     if (i >= result.size()) {
-            //         result.resize(i + 1);
-            //     }
-            //     if (j >= result[i].size()) {
-            //         result[i].resize(j + 1, AltBn128::Fr.zero());
-            //     }
-            //     AltBn128::Fr.neg(result[i][j], poly2[i][j]); // 이 부분은 poly2[i][j] 값이 0이 아닌 경우에만 호출해야 함
-            // }
+            }
         }
     }
 
@@ -165,7 +149,6 @@ typename Poly<Engine>::FrElementMatrix Poly<Engine>::subPoly(FrElementMatrix& po
 
 template <typename Engine>
 typename Poly<Engine>::FrElementMatrix Poly<Engine>::scalePoly(FrElementMatrix& poly, typename Engine::FrElement& scaler) {
-
     size_t numRows = poly.size();
     size_t numCols = poly[0].size();
 
@@ -183,11 +166,7 @@ typename Poly<Engine>::FrElementMatrix Poly<Engine>::scalePoly(FrElementMatrix& 
 }
 
 template <typename Engine>
-typename Poly<Engine>::FrElementMatrix Poly<Engine>::fftMulPoly(
-  FrElementMatrix& poly1, 
-  FrElementMatrix& poly2, 
-  FFT<typename Engine::FrElement>& fft
-) {
+typename Poly<Engine>::FrElementMatrix Poly<Engine>::fftMulPoly(FrElementMatrix& poly1, FrElementMatrix& poly2, FFT<typename Engine::FrElement>& fft) {
     // 차원 줄이기를 적용하여 다항식의 불필요한 차수를 제거
     FrElementMatrix reducedPoly1 = reduceDimPoly(poly1);
     FrElementMatrix reducedPoly2 = reduceDimPoly(poly2);
@@ -212,8 +191,8 @@ typename Poly<Engine>::FrElementMatrix Poly<Engine>::fftMulPoly(
 
     // 각 행에 대해 FFT 수행
     for (size_t i = 0; i < xPad; ++i) {
-        fft.fft(reducedPoly1[i].data(), yPad);
-        fft.fft(reducedPoly2[i].data(), yPad);
+        fft.fft(reducedPoly1[i], yPad);
+        fft.fft(reducedPoly2[i], yPad);
     }
 
     // 행렬의 각 요소를 곱함
@@ -226,7 +205,7 @@ typename Poly<Engine>::FrElementMatrix Poly<Engine>::fftMulPoly(
 
     // 역 FFT 수행
     for (size_t i = 0; i < xPad; ++i) {
-        fft.ifft(result[i].data(), yPad);
+        fft.ifft(result[i], yPad);
     }
 
     // 결과 배열 크기 조정
@@ -238,17 +217,13 @@ typename Poly<Engine>::FrElementMatrix Poly<Engine>::fftMulPoly(
     return result;
 }
 
-typename Poly<Engine>::FrElementMatrix Poly<Engine>::QapDiv(
-    FrElementMatrix& pXY,   // P(X, Y) polynomial
-    size_t n,               // Degree in X
-    size_t sMax,            // Degree in Y
-    FFT<typename Engine::FrElement>& fft                // FFT object for polynomial operations
-) {
-    // Reduce dimensions of the input polynomial
+template <typename Engine>
+typename Poly<Engine>::FrElementMatrix Poly<Engine>::QapDiv(FrElementMatrix& pXY, size_t n, size_t sMax, FFT<typename Engine::FrElement>& fft) {
+    // 차원 줄이기를 적용하여 다항식의 불필요한 차수를 제거
     FrElementMatrix reducedPXY = reduceDimPoly(pXY);
 
     // Transpose P(X, Y) to work along the other dimension
-    FrElementMatrix transposedPXY = transpose(reducedPXY);
+    FrElementMatrix transposedPXY = _transpose(reducedPXY);
 
     // Setup for division
     size_t targetDegreeX = 2 * n - 2;
@@ -272,7 +247,7 @@ typename Poly<Engine>::FrElementMatrix Poly<Engine>::QapDiv(
     FrElementMatrix qXY = divideByTXandTY(transposedPXY, tXTY, fft);
 
     // Transpose back to the original polynomial orientation
-    FrElementMatrix finalQXY = transpose(qXY);
+    FrElementMatrix finalQXY = _transpose(qXY);
 
     // Resize the final polynomial to remove any excess padding
     finalQXY.resize(n);
@@ -283,44 +258,39 @@ typename Poly<Engine>::FrElementMatrix Poly<Engine>::QapDiv(
     return finalQXY;
 }
 
+template <typename Engine>
 typename Poly<Engine>::FrElementMatrix Poly<Engine>::createTX(size_t n, size_t padX, FFT<typename Engine::FrElement>& fft) {
     FrElementMatrix tX(1, FrElementVector(padX, AltBn128::Fr.zero()));
     tX[0][n-1] = AltBn128::Fr.one();  // X^(n-1)
-    tX[0][0] = AltBn128::Fr.negate(AltBn128::Fr.one());  // -1
-    fft.fft(tX[0].data(), padX);
+    tX[0][0] = AltBn128::Fr.negOne();  // -1
+    fft.fft(tX[0], padX);
     return tX;
 }
 
+template <typename Engine>
 typename Poly<Engine>::FrElementMatrix Poly<Engine>::createTY(size_t sMax, size_t padY, FFT<typename Engine::FrElement>& fft) {
     FrElementMatrix tY(1, FrElementVector(padY, AltBn128::Fr.zero()));
     tY[0][sMax-1] = AltBn128::Fr.one();  // Y^(sMax-1)
-    tY[0][0] = AltBn128::Fr.negate(AltBn128::Fr.one());  // -1
-    fft.fft(tY[0].data(), padY);
+    tY[0][0] = AltBn128::Fr.negOne();  // -1
+    fft.fft(tY[0], padY);
     return tY;
 }
 
-typename Poly<Engine>::FrElementMatrix Poly<Engine>::divideByTXandTY(
-    FrElementMatrix& pXY, 
-    FrElementMatrix& tXTY, 
-    FFT<typename Engine::FrElement>& fft
-) {
+template <typename Engine>
+typename Poly<Engine>::FrElementMatrix Poly<Engine>::divideByTXandTY(FrElementMatrix& pXY, FrElementMatrix& tXTY, FFT<typename Engine::FrElement>& fft) {
     // Multiply P(X, Y) by the inverse of t(X)*t(Y)
     for (size_t i = 0; i < pXY.size(); ++i) {
-        fft.fft(pXY[i].data(), pXY[i].size());
+        fft.fft(pXY[i], pXY[i].size());
         for (size_t j = 0; j < pXY[i].size(); ++j) {
             AltBn128::Fr.mul(pXY[i][j], pXY[i][j], tXTY[0][j]); // Multiply element-wise
         }
-        fft.ifft(pXY[i].data(), pXY[i].size());
+        fft.ifft(pXY[i], pXY[i].size());
     }
     return pXY;
 }
 
-
-typename Poly<Engine>::FrElementMatrix Poly<Engine>::_fft2dMulPoly(
-    FrElementMatrix& poly1, 
-    FrElementMatrix& poly2,
-    FFT<typename Engine::FrElement>& fft
-) {
+template <typename Engine>
+typename Poly<Engine>::FrElementMatrix Poly<Engine>::_fft2dMulPoly(FrElementMatrix& poly1, FrElementMatrix& poly2, FFT<typename Engine::FrElement>& fft) {
     // 차수 감소 후 사용할 최소 크기 계산
     poly1 = reduceDimPoly(poly1);
     poly2 = reduceDimPoly(poly2);
@@ -339,14 +309,14 @@ typename Poly<Engine>::FrElementMatrix Poly<Engine>::_fft2dMulPoly(
 
     // FFT 수행
     for (auto& row : poly1) {
-        fft.fft(row.data(), row.size());
+        fft.fft(row, row.size());
     }
     for (auto& row : poly2) {
-        fft.fft(row.data(), row.size());
+        fft.fft(row, row.size());
     }
 
     // 곱셈 수행
-    FrElementMatrix result(xPad, StringMatrix(yPad));
+    FrElementMatrix result(xPad, FrElementVector(yPad));
     for (size_t i = 0; i < xPad; ++i) {
         for (size_t j = 0; j < yPad; ++j) {
             AltBn128::Fr.mul(result[i][j], poly1[i][j], poly2[i][j]);
@@ -355,7 +325,7 @@ typename Poly<Engine>::FrElementMatrix Poly<Engine>::_fft2dMulPoly(
 
     // 역 FFT 수행
     for (auto& row : result) {
-        fft.ifft(row.data(), row.size());
+        fft.ifft(row, row.size());
     }
 
     // 결과 배열 크기 조정
@@ -367,11 +337,8 @@ typename Poly<Engine>::FrElementMatrix Poly<Engine>::_fft2dMulPoly(
     return result;
 }
 
-FrElementVector Poly::_fft1dMulPoly(
-    FrElementVector& poly1, 
-    FrElementVector& poly2,
-    FFT<typename Engine::FrElement>& fft
-) {
+template <typename Engine>
+typename Poly<Engine>::FrElementVector Poly<Engine>::_fft1dMulPoly(FrElementVector& poly1, FrElementVector& poly2, FFT<typename Engine::FrElement>& fft) {
     // 입력 다항식의 차수 감소
     size_t xDegree = poly1.size() + poly2.size() - 1;
 
@@ -383,8 +350,8 @@ FrElementVector Poly::_fft1dMulPoly(
     poly2.resize(xPad, AltBn128::Fr.zero());
 
     // FFT 수행
-    fft.fft(poly1.data(), poly1.size());
-    fft.fft(poly2.data(), poly2.size());
+    fft.fft(poly1, poly1.size());
+    fft.fft(poly2, poly2.size());
 
     // 곱셈 수행
     FrElementVector result(xPad);
@@ -393,7 +360,7 @@ FrElementVector Poly::_fft1dMulPoly(
     }
 
     // 역 FFT 수행
-    fft.ifft(result.data(), result.size());
+    fft.ifft(result, result.size());
 
     // 결과 배열 크기 조정
     result.resize(xDegree);
@@ -401,17 +368,13 @@ FrElementVector Poly::_fft1dMulPoly(
     return result;
 }
 
-struct OrderPoly {
-    int xOrder;
-    int yOrder;
-};
-
-OrderPoly _orderPoly(FrElementMatrix& coefs) {
+template <typename Engine>
+typename Poly<Engine>::OrderPoly Poly<Engine>::_orderPoly(FrElementMatrix& coefs) {
     // xOrder를 찾기 위해 각 행의 마지막으로 0이 아닌 요소를 찾습니다.
     int xOrder = -1;
     for (size_t i = 0; i < coefs.size(); ++i) {
         for (size_t j = coefs[i].size(); j > 0; --j) {
-            if (!coefs[i][j-1].isZero()) {
+            if (!AltBn128::Fr.isZero(coefs[i][j-1])) {
                 xOrder = std::max(xOrder, static_cast<int>(i));
                 break;
             }
@@ -424,7 +387,7 @@ OrderPoly _orderPoly(FrElementMatrix& coefs) {
         size_t numCols = coefs[0].size();
         for (size_t j = 0; j < numCols; ++j) {
             for (size_t i = coefs.size(); i > 0; --i) {
-                if (!coefs[i-1][j].isZero()) {
+                if (!AltBn128::Fr.isZero(coefs[i-1][j])) {
                     yOrder = std::max(yOrder, static_cast<int>(j));
                     break;
                 }
@@ -435,13 +398,14 @@ OrderPoly _orderPoly(FrElementMatrix& coefs) {
     return {xOrder, yOrder};
 }
 
-FrElementMatrix reduceDimPoly(FrElementMatrix& coefs) {
+template <typename Engine>
+typename Poly<Engine>::FrElementMatrix Poly<Engine>::reduceDimPoly(FrElementMatrix& coefs) {
     auto [xOrder, yOrder] = _orderPoly(coefs); // 최고 유효 차수를 얻습니다.
 
     if (xOrder == -1 || yOrder == -1) return FrElementMatrix(); // 모든 계수가 0인 경우
 
     // 필요한 차원만큼만 포함하는 새로운 다항식 배열을 생성합니다.
-    FrElementMatrix reducedPoly(xOrder + 1, StringMatrix(yOrder + 1, AltBn128::Fr.zero()));
+    FrElementMatrix reducedPoly(xOrder + 1, FrElementVector(yOrder + 1, AltBn128::Fr.zero()));
     for (int i = 0; i <= xOrder; ++i) {
         for (int j = 0; j <= yOrder; ++j) {
             reducedPoly[i][j] = coefs[i][j];
@@ -451,7 +415,8 @@ FrElementMatrix reduceDimPoly(FrElementMatrix& coefs) {
     return reducedPoly;
 }
 
-void paddingMatrix(FrElementMatrix& matrix, size_t targetRowLength, size_t targetColLength) {
+template <typename Engine>
+void Poly<Engine>::paddingMatrix(FrElementMatrix& matrix, size_t targetRowLength, size_t targetColLength) {
     // 현재 행렬의 크기
     size_t currentRowLength = matrix.size();
     size_t currentColLength = currentRowLength > 0 ? matrix[0].size() : 0;
@@ -465,12 +430,13 @@ void paddingMatrix(FrElementMatrix& matrix, size_t targetRowLength, size_t targe
 
     // 행 길이 조정
     if (currentRowLength < targetRowLength) {
-        StringMatrix newRow(targetColLength, AltBn128::Fr.zero());
+        FrElementVector newRow(targetColLength, AltBn128::Fr.zero());
         matrix.resize(targetRowLength, newRow);
     }
 }
 
-size_t minPowerOfTwo(size_t x) {
+template <typename Engine>
+size_t Poly<Engine>::minPowerOfTwo(size_t x) {
     if (x < 2) {
         return 2;
     }
@@ -478,12 +444,12 @@ size_t minPowerOfTwo(size_t x) {
     return static_cast<size_t>(std::pow(2, power));
 }
 
-
+template <typename Engine>
 typename Poly<Engine>::FrElementMatrix Poly<Engine>::_autoTransFromObject(StringMatrix& input) {
     size_t numRows = input.size();
     size_t numCols = numRows > 0 ? input[0].size() : 0;
 
-    FrElementMatrix result(numRows, StringMatrix(numCols, AltBn128::Fr.zero()));
+    FrElementMatrix result(numRows, FrElementVector(numCols, AltBn128::Fr.zero()));
 
     for (size_t i = 0; i < numRows; i++) {
         for (size_t j = 0; j < numCols; j++) {
@@ -494,7 +460,8 @@ typename Poly<Engine>::FrElementMatrix Poly<Engine>::_autoTransFromObject(String
     return result;
 }
 
-StringMatrix Poly::_transToObject(FrElementMatrix& input) {
+template <typename Engine>
+typename Poly<Engine>::StringMatrix Poly<Engine>::_transToObject(FrElementMatrix& input) {
     size_t numRows = input.size();
     size_t numCols = numRows > 0 ? input[0].size() : 0;
 
@@ -509,16 +476,11 @@ StringMatrix Poly::_transToObject(FrElementMatrix& input) {
     return result;
 }
 
-struct PolyOrder {
-    int xOrder; // X 차수
-    int yOrder; // Y 차수
-    AltBn128::FrElement coefficient; // 해당 차수의 계수
-};
-
-PolyOrder Poly::_findOrder(FrElementMatrix& coefs, int dir) {
+template <typename Engine>
+typename Poly<Engine>::PolyOrder Poly<Engine>::_findOrder(FrElementMatrix& coefs, int dir) {
     PolyOrder order;
-    order.xId = -1; // 초기 차수 설정
-    order.yId = -1; // 초기 차수 설정
+    order.xOrder = -1; // 초기 차수 설정
+    order.yOrder = -1; // 초기 차수 설정
     order.coefficient = AltBn128::Fr.zero(); // 초기 계수는 0
 
     int numRows = coefs.size();
@@ -529,8 +491,8 @@ PolyOrder Poly::_findOrder(FrElementMatrix& coefs, int dir) {
         for (int i = numRows - 1; i >= 0; --i) {
             for (int j = numCols - 1; j >= 0; --j) {
                 if (!AltBn128::Fr.isZero(coefs[i][j])) {
-                    order.xId = i;
-                    order.yId = j;
+                    order.xOrder = i;
+                    order.yOrder = j;
                     order.coefficient = coefs[i][j];
                     return order; // 첫 번째 비-0 계수를 찾으면 반환
                 }
@@ -540,8 +502,8 @@ PolyOrder Poly::_findOrder(FrElementMatrix& coefs, int dir) {
         for (int j = numCols - 1; j >= 0; --j) {
             for (int i = numRows - 1; i >= 0; --i) {
                 if (!AltBn128::Fr.isZero(coefs[i][j])) {
-                    order.xId = i;
-                    order.yId = j;
+                    order.xOrder = i;
+                    order.yOrder = j;
                     order.coefficient = coefs[i][j];
                     return order; // 첫 번째 비-0 계수를 찾으면 반환
                 }
@@ -553,6 +515,7 @@ PolyOrder Poly::_findOrder(FrElementMatrix& coefs, int dir) {
     return order;
 }
 
+template <typename Engine>
 typename Poly<Engine>::FrElementMatrix Poly<Engine>::_transpose(const FrElementMatrix& matrix) {
     size_t numRows = matrix.size();
     size_t numCols = matrix.empty() ? 0 : matrix[0].size();
@@ -570,6 +533,7 @@ typename Poly<Engine>::FrElementMatrix Poly<Engine>::_transpose(const FrElementM
     return transposedMatrix;
 }
 
-
+// Explicit template instantiation
 template class PolyUtils::Poly<AltBn128::Engine>;
-}
+
+} // namespace PolyUtils
