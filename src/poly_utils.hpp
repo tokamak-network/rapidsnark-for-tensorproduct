@@ -20,15 +20,15 @@ namespace PolyUtils {
     FrElementMatrix mulPoly(FrElementMatrix& array1, FrElementMatrix& array2);
     FrElementMatrix subPoly(FrElementMatrix& array1, FrElementMatrix& array2);
     FrElementMatrix scalePoly(FrElementMatrix& poly, typename Engine::FrElement& scaler);
-    FrElementMatrix fftMulPoly(FrElementMatrix& array1, FrElementMatrix& array2, FFT<typename Engine::FrElement>& fft);
-    FrElementMatrix QapDiv(FrElementMatrix& array1, size_t n, size_t sMax, FFT<typename Engine::FrElement>& fft);
+    FrElementMatrix fftMulPoly(FrElementMatrix& array1, FrElementMatrix& array2, FFT<typename Engine::Fr>* fft);
+    FrElementMatrix QapDiv(FrElementMatrix& array1, size_t n, size_t sMax, FFT<typename Engine::Fr>* fft);
   
   private:
-    FrElementMatrix createTX(size_t n, size_t padX, FFT<typename Engine::FrElement>& fft);
-    FrElementMatrix createTY(size_t sMax, size_t padY, FFT<typename Engine::FrElement>& fft);
-    FrElementMatrix divideByTXandTY(FrElementMatrix& pXY, FrElementMatrix& tXTY, FFT<typename Engine::FrElement>& fft);
-    FrElementMatrix _fft2dMulPoly(FrElementMatrix& poly1, FrElementMatrix& poly2, FFT<typename Engine::FrElement>& fft);
-    FrElementVector _fft1dMulPoly(FrElementVector& poly1, FrElementVector& poly2, FFT<typename Engine::FrElement>& fft);
+    FrElementMatrix createTX(size_t n, size_t padX, FFT<typename Engine::Fr>* fft);
+    FrElementMatrix createTY(size_t sMax, size_t padY, FFT<typename Engine::Fr>* fft);
+    FrElementMatrix divideByTXandTY(FrElementMatrix& pXY, FrElementMatrix& tXTY, FFT<typename Engine::Fr>* fft);
+    FrElementMatrix _fft2dMulPoly(FrElementMatrix& poly1, FrElementMatrix& poly2, FFT<typename Engine::Fr>* fft);
+    FrElementVector _fft1dMulPoly(FrElementVector& poly1, FrElementVector& poly2, FFT<typename Engine::Fr>* fft);
     FrElementMatrix _autoTransFromObject(StringMatrix& input);
     StringMatrix _transToObject(FrElementMatrix& input);
     FrElementMatrix reduceDimPoly(FrElementMatrix& coefs);

@@ -166,7 +166,7 @@ typename Poly<Engine>::FrElementMatrix Poly<Engine>::scalePoly(FrElementMatrix& 
 }
 
 template <typename Engine>
-typename Poly<Engine>::FrElementMatrix Poly<Engine>::fftMulPoly(FrElementMatrix& poly1, FrElementMatrix& poly2, FFT<typename Engine::FrElement>& fft) {
+typename Poly<Engine>::FrElementMatrix Poly<Engine>::fftMulPoly(FrElementMatrix& poly1, FrElementMatrix& poly2, FFT<typename Engine::Fr>* fft) {
     // 차원 줄이기를 적용하여 다항식의 불필요한 차수를 제거
     FrElementMatrix reducedPoly1 = reduceDimPoly(poly1);
     FrElementMatrix reducedPoly2 = reduceDimPoly(poly2);
@@ -191,8 +191,8 @@ typename Poly<Engine>::FrElementMatrix Poly<Engine>::fftMulPoly(FrElementMatrix&
 
     // 각 행에 대해 FFT 수행
     for (size_t i = 0; i < xPad; ++i) {
-        fft.fft(reducedPoly1[i], yPad);
-        fft.fft(reducedPoly2[i], yPad);
+        fft->fft(reducedPoly1[i], yPad);
+        fft->fft(reducedPoly2[i], yPad);
     }
 
     // 행렬의 각 요소를 곱함
@@ -205,7 +205,7 @@ typename Poly<Engine>::FrElementMatrix Poly<Engine>::fftMulPoly(FrElementMatrix&
 
     // 역 FFT 수행
     for (size_t i = 0; i < xPad; ++i) {
-        fft.ifft(result[i], yPad);
+        fft->ifft(result[i], yPad);
     }
 
     // 결과 배열 크기 조정
@@ -218,7 +218,7 @@ typename Poly<Engine>::FrElementMatrix Poly<Engine>::fftMulPoly(FrElementMatrix&
 }
 
 template <typename Engine>
-typename Poly<Engine>::FrElementMatrix Poly<Engine>::QapDiv(FrElementMatrix& pXY, size_t n, size_t sMax, FFT<typename Engine::FrElement>& fft) {
+typename Poly<Engine>::FrElementMatrix Poly<Engine>::QapDiv(FrElementMatrix& pXY, size_t n, size_t sMax, FFT<typename Engine::Fr>* fft) {
     // 차원 줄이기를 적용하여 다항식의 불필요한 차수를 제거
     FrElementMatrix reducedPXY = reduceDimPoly(pXY);
 
@@ -259,38 +259,38 @@ typename Poly<Engine>::FrElementMatrix Poly<Engine>::QapDiv(FrElementMatrix& pXY
 }
 
 template <typename Engine>
-typename Poly<Engine>::FrElementMatrix Poly<Engine>::createTX(size_t n, size_t padX, FFT<typename Engine::FrElement>& fft) {
+typename Poly<Engine>::FrElementMatrix Poly<Engine>::createTX(size_t n, size_t padX, FFT<typename Engine::Fr>* fft) {
     FrElementMatrix tX(1, FrElementVector(padX, AltBn128::Fr.zero()));
     tX[0][n-1] = AltBn128::Fr.one();  // X^(n-1)
     tX[0][0] = AltBn128::Fr.negOne();  // -1
-    fft.fft(tX[0], padX);
+    fft->fft(tX[0], padX);
     return tX;
 }
 
 template <typename Engine>
-typename Poly<Engine>::FrElementMatrix Poly<Engine>::createTY(size_t sMax, size_t padY, FFT<typename Engine::FrElement>& fft) {
+typename Poly<Engine>::FrElementMatrix Poly<Engine>::createTY(size_t sMax, size_t padY, FFT<typename Engine::Fr>* fft) {
     FrElementMatrix tY(1, FrElementVector(padY, AltBn128::Fr.zero()));
     tY[0][sMax-1] = AltBn128::Fr.one();  // Y^(sMax-1)
     tY[0][0] = AltBn128::Fr.negOne();  // -1
-    fft.fft(tY[0], padY);
+    fft->fft(tY[0], padY);
     return tY;
 }
 
 template <typename Engine>
-typename Poly<Engine>::FrElementMatrix Poly<Engine>::divideByTXandTY(FrElementMatrix& pXY, FrElementMatrix& tXTY, FFT<typename Engine::FrElement>& fft) {
+typename Poly<Engine>::FrElementMatrix Poly<Engine>::divideByTXandTY(FrElementMatrix& pXY, FrElementMatrix& tXTY, FFT<typename Engine::Fr>* fft) {
     // Multiply P(X, Y) by the inverse of t(X)*t(Y)
     for (size_t i = 0; i < pXY.size(); ++i) {
-        fft.fft(pXY[i], pXY[i].size());
+        fft->fft(pXY[i], pXY[i].size());
         for (size_t j = 0; j < pXY[i].size(); ++j) {
             AltBn128::Fr.mul(pXY[i][j], pXY[i][j], tXTY[0][j]); // Multiply element-wise
         }
-        fft.ifft(pXY[i], pXY[i].size());
+        fft->ifft(pXY[i], pXY[i].size());
     }
     return pXY;
 }
 
 template <typename Engine>
-typename Poly<Engine>::FrElementMatrix Poly<Engine>::_fft2dMulPoly(FrElementMatrix& poly1, FrElementMatrix& poly2, FFT<typename Engine::FrElement>& fft) {
+typename Poly<Engine>::FrElementMatrix Poly<Engine>::_fft2dMulPoly(FrElementMatrix& poly1, FrElementMatrix& poly2, FFT<typename Engine::Fr>* fft) {
     // 차수 감소 후 사용할 최소 크기 계산
     poly1 = reduceDimPoly(poly1);
     poly2 = reduceDimPoly(poly2);
@@ -309,10 +309,10 @@ typename Poly<Engine>::FrElementMatrix Poly<Engine>::_fft2dMulPoly(FrElementMatr
 
     // FFT 수행
     for (auto& row : poly1) {
-        fft.fft(row, row.size());
+        fft->fft(row, row.size());
     }
     for (auto& row : poly2) {
-        fft.fft(row, row.size());
+        fft->fft(row, row.size());
     }
 
     // 곱셈 수행
@@ -325,7 +325,7 @@ typename Poly<Engine>::FrElementMatrix Poly<Engine>::_fft2dMulPoly(FrElementMatr
 
     // 역 FFT 수행
     for (auto& row : result) {
-        fft.ifft(row, row.size());
+        fft->ifft(row, row.size());
     }
 
     // 결과 배열 크기 조정
@@ -338,7 +338,7 @@ typename Poly<Engine>::FrElementMatrix Poly<Engine>::_fft2dMulPoly(FrElementMatr
 }
 
 template <typename Engine>
-typename Poly<Engine>::FrElementVector Poly<Engine>::_fft1dMulPoly(FrElementVector& poly1, FrElementVector& poly2, FFT<typename Engine::FrElement>& fft) {
+typename Poly<Engine>::FrElementVector Poly<Engine>::_fft1dMulPoly(FrElementVector& poly1, FrElementVector& poly2, FFT<typename Engine::Fr>* fft) {
     // 입력 다항식의 차수 감소
     size_t xDegree = poly1.size() + poly2.size() - 1;
 
@@ -350,8 +350,8 @@ typename Poly<Engine>::FrElementVector Poly<Engine>::_fft1dMulPoly(FrElementVect
     poly2.resize(xPad, AltBn128::Fr.zero());
 
     // FFT 수행
-    fft.fft(poly1, poly1.size());
-    fft.fft(poly2, poly2.size());
+    fft->fft(poly1, poly1.size());
+    fft->fft(poly2, poly2.size());
 
     // 곱셈 수행
     FrElementVector result(xPad);
@@ -360,7 +360,7 @@ typename Poly<Engine>::FrElementVector Poly<Engine>::_fft1dMulPoly(FrElementVect
     }
 
     // 역 FFT 수행
-    fft.ifft(result, result.size());
+    fft->ifft(result, result.size());
 
     // 결과 배열 크기 조정
     result.resize(xDegree);
