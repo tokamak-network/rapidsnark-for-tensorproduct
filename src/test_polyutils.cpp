@@ -12,7 +12,6 @@
 #include <time.h>
 #include "poly_utils.hpp"
 
-
 #define handle_error(msg) \
            do { perror(msg); exit(EXIT_FAILURE); } while (0)
 
@@ -86,20 +85,20 @@ void test_subpoly (typename PolyUtils::Poly<AltBn128::Engine>::FrElementMatrix v
   printf("----------------------------------------------------- \n\n");
 }
 
-// void test_fftMulPoly (FrElementMatrix vector1, FrElementMatrix vector2, FFT& fft) {
-//   FrElementMatrix result = polyUtil.fftMulPoly(vector1, vector2, fft);
+void test_fftMulPoly (typename PolyUtils::Poly<AltBn128::Engine>::FrElementMatrix vector1, typename PolyUtils::Poly<AltBn128::Engine>::FrElementMatrix vector2, FFT<AltBn128::Engine::Fr>* fft) {
+  auto result = polyUtil.fftMulPoly(vector1, vector2, fft);
 
-//   printf("fftMul poly test result start \n\n");
-//   for (int i = 0; i < 4; i++) {
-//     AltBn128::FrElement auxProduct;
-//     for (int j = 0; j < 4; j++) {
-//       AltBn128::Fr.toMontgomery(auxProduct, result[i][j]);
-//       printf("%s \n", AltBn128::Fr.toString(auxProduct).c_str());
-//     }
-//   }
-//   printf("\nfftMul poly test result end \n\n");
-//   printf("----------------------------------------------------- \n\n");
-// }
+  printf("fftMul poly test result start \n\n");
+  for (int i = 0; i < 4; i++) {
+    AltBn128::FrElement auxProduct;
+    for (int j = 0; j < 4; j++) {
+      AltBn128::Fr.toMontgomery(auxProduct, result[i][j]);
+      printf("%s \n", AltBn128::Fr.toString(auxProduct).c_str());
+    }
+  }
+  printf("\nfftMul poly test result end \n\n");
+  printf("----------------------------------------------------- \n\n");
+}
 
 void test_scalepoly (typename PolyUtils::Poly<AltBn128::Engine>::FrElementMatrix vector1, typename AltBn128::Engine::FrElement scaler) {
 
@@ -124,7 +123,7 @@ int main(int argc, char **argv) {
     mpz_init(altBbn128r);
     mpz_set_str(altBbn128r, "21888242871839275222246405745257275088548364400416034343698204186575808495617", 10);
     try {
-      // fft = new FFT<typename AltBn128::Engine::Fr>(1024*2);
+      auto fft = new FFT<AltBn128::Engine::Fr>(1024*2);
       Poly<AltBn128::Engine> polyUtil;
       typedef Poly<AltBn128::Engine>::FrElementMatrix FrElementMatrix;
       int SIZE = 4;
@@ -154,11 +153,11 @@ int main(int argc, char **argv) {
       vector2.push_back({sample2[0], sample2[1], sample2[2], sample2[3]});
       vector1_1.push_back({sample1[0], sample1[1], sample1[2], sample1[3]});
 
-      test_tensorproduct (vector1, vector2);
-      test_addpoly (vector1, vector2);
-      test_subpoly (vector1_1, vector2);
-      test_mulpoly (vector1_1, vector2);
-      // test_fftMulPoly (vector1_1, vector2, fft);
+      // test_tensorproduct (vector1, vector2);
+      // test_addpoly (vector1, vector2);
+      // test_subpoly (vector1_1, vector2);
+      // test_mulpoly (vector1_1, vector2);
+      test_fftMulPoly (vector1_1, vector2, fft);
       test_scalepoly (vector1_1, sample2[1]);
       // QapDiv
       
@@ -166,6 +165,7 @@ int main(int argc, char **argv) {
 
       delete[] sample1;
       delete[] sample2;
+      delete fft;
 
     } catch (std::exception* e) {
         mpz_clear(altBbn128r);
@@ -174,4 +174,3 @@ int main(int argc, char **argv) {
     }
     mpz_clear(altBbn128r);
 }
-
