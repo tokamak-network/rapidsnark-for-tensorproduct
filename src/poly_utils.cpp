@@ -5,6 +5,7 @@
 #include <alt_bn128.hpp>
 #include "poly_utils.hpp"
 #include <cmath>
+#include <iostream>
 
 namespace PolyUtils {
 
@@ -140,62 +141,54 @@ typename Poly<Engine>::FrElementMatrix Poly<Engine>::scalePoly(FrElementMatrix& 
 }
 
 template <typename Engine>
+size_t Poly<Engine>::checkDim(FrElementMatrix& array) {
+    size_t row = array.size();
+    size_t col = array[0].size();
+
+    if (row == 1) return 1;
+    if (col == 1) return -1;
+
+    return 0;
+}
+
+template <typename Engine>
 typename Poly<Engine>::FrElementMatrix Poly<Engine>::fftMulPoly(FrElementMatrix& poly1, FrElementMatrix& poly2, FFT<typename Engine::Fr>* fft) {
-    // 다차원 다항식 차원 줄이기
-    FrElementMatrix reducedPoly1 = reduceDimPoly(poly1);
-    FrElementMatrix reducedPoly2 = reduceDimPoly(poly2);
+    size_t shape1 = checkDim(poly1);
+    size_t shape2 = checkDim(poly2);
 
-    // 1D 다항식인지 확인
-    bool is1DPoly1 = reducedPoly1.size() == 1 || reducedPoly1[0].size() == 1;
-    bool is1DPoly2 = reducedPoly2.size() == 1 || reducedPoly2[0].size() == 1;
-
-    if (is1DPoly1 && is1DPoly2) {
-        return _fft1dMulPoly(reducedPoly1, reducedPoly2, fft);
-    } else {
-        return _fft2dMulPoly(reducedPoly1, reducedPoly2, fft);
-    }
-}
-
-template <typename Engine>
-typename Poly<Engine>::FrElementMatrix Poly<Engine>::_fft2dMulPoly(FrElementMatrix& poly1, FrElementMatrix& poly2, FFT<typename Engine::Fr>* fft) {
-    size_t xDegree = poly1.size() + poly2.size() - 1;
-    size_t yDegree = poly1[0].size() + poly2[0].size() - 1;
-
-    size_t xPad = minPowerOfTwo(xDegree);
-    size_t yPad = minPowerOfTwo(yDegree);
-
-    paddingMatrix(poly1, xPad, yPad);
-    paddingMatrix(poly2, xPad, yPad);
-
-    FrElementMatrix result(xPad, FrElementVector(yPad));
-
-    for (size_t i = 0; i < xPad; ++i) {
-        fft->fft(poly1[i].data(), yPad);
-        fft->fft(poly2[i].data(), yPad);
+    if (shape1 == 0 && shape2 == 0) {
+        return _fft2dMulPoly(poly1, poly2, fft);
     }
 
-    for (size_t i = 0; i < xPad; ++i) {
-        for (size_t j = 0; j < yPad; ++j) {
-            AltBn128::Fr.mul(result[i][j], poly1[i][j], poly2[i][j]);
+    FrElementMatrix vector1 = poly1;
+    FrElementMatrix vector2 = poly2;
+
+    if (shape1 != shape2) {
+        bool isColumnVector = shape2 == -1;
+        if (isColumnVector) {
+            vector1 = _transpose(vector1);
+            vector2 = _transpose(vector2);
         }
-    }
 
-    for (size_t i = 0; i < xPad; ++i) {
-        fft->ifft(result[i].data(), yPad);
-    }
+        FrElementMatrix reducedPoly1 = reduceDimPoly(vector1);
+        FrElementMatrix result;
 
-    result.resize(xDegree);
-    for (size_t i = 0; i < xDegree; ++i) {
-        result[i].resize(yDegree);
-    }
+        for (size_t i = 0; i < reducedPoly1.size(); ++i) {
+            result.push_back(_fft1dMulPoly(reducedPoly1[i], vector2[0], fft));
+        }
 
-    return result;
+        if (isColumnVector) {
+            return _transpose(result);
+        }
+        return result;
+    }
+    return _fft2dMulPoly(vector1, vector2, fft);
 }
 
 template <typename Engine>
-typename Poly<Engine>::FrElementMatrix Poly<Engine>::_fft1dMulPoly(FrElementMatrix& poly1, FrElementMatrix& poly2, FFT<typename Engine::Fr>* fft) {
-    FrElementVector vector1 = poly1[0];
-    FrElementVector vector2 = poly2[0];
+typename Poly<Engine>::FrElementVector Poly<Engine>::_fft1dMulPoly(FrElementVector& poly1, FrElementVector& poly2, FFT<typename Engine::Fr>* fft) {
+    FrElementVector vector1 = poly1;
+    FrElementVector vector2 = poly2;
 
     size_t degree = vector1.size() + vector2.size() - 1;
     size_t padSize = minPowerOfTwo(degree);
@@ -214,7 +207,7 @@ typename Poly<Engine>::FrElementMatrix Poly<Engine>::_fft1dMulPoly(FrElementMatr
     fft->ifft(result.data(), padSize);
 
     result.resize(degree);
-    return {result};
+    return result;
 }
 
 template <typename Engine>
@@ -261,10 +254,9 @@ typename Poly<Engine>::FrElementMatrix Poly<Engine>::reduceDimPoly(FrElementMatr
 
 template <typename Engine>
 typename Poly<Engine>::OrderPoly Poly<Engine>::_orderPoly(FrElementMatrix& coefs) {
-    PolyOrder order;
+    OrderPoly order;
     order.xOrder = -1;
     order.yOrder = -1;
-    order.coefficient = AltBn128::Fr.zero();
 
     int numRows = coefs.size();
     int numCols = numRows > 0 ? coefs[0].size() : 0;
@@ -274,7 +266,6 @@ typename Poly<Engine>::OrderPoly Poly<Engine>::_orderPoly(FrElementMatrix& coefs
             if (!AltBn128::Fr.isZero(coefs[i][j])) {
                 order.xOrder = i;
                 order.yOrder = j;
-                order.coefficient = coefs[i][j];
                 return order;
             }
         }
@@ -299,119 +290,40 @@ typename Poly<Engine>::FrElementMatrix Poly<Engine>::_transpose(const FrElementM
     return transposedMatrix;
 }
 
-// template <typename Engine>
-// typename Poly<Engine>::FrElementMatrix Poly<Engine>::fftMulPoly(FrElementMatrix& poly1, FrElementMatrix& poly2, FFT<typename Engine::Fr>* fft) {
-//     FrElementMatrix reducedPoly1 = reduceDimPoly(poly1);
-//     FrElementMatrix reducedPoly2 = reduceDimPoly(poly2);
-
-//     size_t numRows = reducedPoly1.size();
-//     size_t numCols = reducedPoly1[0].size();
-
-//     size_t numRows2 = reducedPoly2.size();
-//     size_t numCols2 = reducedPoly2[0].size();
-
-//     size_t resultRows = numRows + numRows2 - 1;
-//     size_t resultCols = numCols + numCols2 - 1;
-
-//     size_t xPad = minPowerOfTwo(resultRows);
-//     size_t yPad = minPowerOfTwo(resultCols);
-
-//     paddingMatrix(reducedPoly1, xPad, yPad);
-//     paddingMatrix(reducedPoly2, xPad, yPad);
-
-//     for (size_t i = 0; i < xPad; ++i) {
-//         fft->fft(reducedPoly1[i].data(), yPad);
-//         fft->fft(reducedPoly2[i].data(), yPad);
-//     }
-
-//     FrElementMatrix result(xPad, FrElementVector(yPad));
-//     for (size_t i = 0; i < xPad; ++i) {
-//         for (size_t j = 0; j < yPad; ++j) {
-//           printf("%s \n", AltBn128::Fr.toString(reducedPoly1[i][j]).c_str());
-//           printf("%s \n", AltBn128::Fr.toString(reducedPoly2[i][j]).c_str());
-//             AltBn128::Fr.mul(result[i][j], reducedPoly1[i][j], reducedPoly2[i][j]);
-//         }
-//     }
-
-//     for (size_t i = 0; i < xPad; ++i) {
-//         fft->ifft(result[i].data(), yPad);
-//     }
-
-//     result.resize(resultRows);
-//     for (size_t i = 0; i < resultRows; ++i) {
-//         result[i].resize(resultCols);
-//     }
-
-//     return result;
-// }
-
 template <typename Engine>
-typename Poly<Engine>::FrElementMatrix Poly<Engine>::_autoTransFromObject(StringMatrix& input) {
-    size_t numRows = input.size();
-    size_t numCols = numRows > 0 ? input[0].size() : 0;
+typename Poly<Engine>::FrElementMatrix Poly<Engine>::_fft2dMulPoly(FrElementMatrix& poly1, FrElementMatrix& poly2, FFT<typename Engine::Fr>* fft) {
+    size_t xDegree = poly1.size() + poly2.size() - 1;
+    size_t yDegree = poly1[0]..size() + poly2[0].size() - 1;
 
-    FrElementMatrix result(numRows, FrElementVector(numCols, AltBn128::Fr.zero()));
+    size_t xPad = minPowerOfTwo(xDegree);
+    size_t yPad = minPowerOfTwo(yDegree);
 
-    for (size_t i = 0; i < numRows; i++) {
-        for (size_t j = 0; j < numCols; j++) {
-            AltBn128::Fr.fromString(result[i][j], input[i][j]);
+    paddingMatrix(poly1, xPad, yPad);
+    paddingMatrix(poly2, xPad, yPad);
+
+    FrElementMatrix result(xPad, FrElementVector(yPad));
+
+    for (size_t i = 0; i < xPad; ++i) {
+        fft->fft(poly1[i].data(), yPad);
+        fft->fft(poly2[i].data(), yPad);
+    }
+
+    for (size_t i = 0; i < xPad; ++i) {
+        for (size_t j = 0; j < yPad; ++j) {
+            AltBn128::Fr.mul(result[i][j], poly1[i][j], poly2[i][j]);
         }
+    }
+
+    for (size_t i = 0; i < xPad; ++i) {
+        fft->ifft(result[i].data(), yPad);
+    }
+
+    result.resize(xDegree);
+    for (size_t i = 0; i < xDegree; ++i) {
+        result[i].resize(yDegree);
     }
 
     return result;
-}
-
-template <typename Engine>
-typename Poly<Engine>::StringMatrix Poly<Engine>::_transToObject(FrElementMatrix& input) {
-    size_t numRows = input.size();
-    size_t numCols = numRows > 0 ? input[0].size() : 0;
-
-    StringMatrix result(numRows, StringVector(numCols));
-
-    for (size_t i = 0; i < numRows; i++) {
-        for (size_t j = 0; j < numCols; j++) {
-            result[i][j] = AltBn128::Fr.toString(input[i][j]);
-        }
-    }
-
-    return result;
-}
-
-template <typename Engine>
-typename Poly<Engine>::PolyOrder Poly<Engine>::_findOrder(FrElementMatrix& coefs, int dir) {
-    PolyOrder order;
-    order.xOrder = -1;
-    order.yOrder = -1;
-    order.coefficient = AltBn128::Fr.zero();
-
-    int numRows = coefs.size();
-    int numCols = numRows > 0 ? coefs[0].size() : 0;
-
-    if (dir == 0) {
-        for (int i = numRows - 1; i >= 0; --i) {
-            for (int j = numCols - 1; j >= 0; --j) {
-                if (!AltBn128::Fr.isZero(coefs[i][j])) {
-                    order.xOrder = i;
-                    order.yOrder = j;
-                    order.coefficient = coefs[i][j];
-                    return order;
-                }
-            }
-        }
-    } else if (dir == 1) {
-        for (int j = numCols - 1; j >= 0; --j) {
-            for (int i = numRows - 1; i >= 0; --i) {
-                if (!AltBn128::Fr.isZero(coefs[i][j])) {
-                    order.xOrder = i;
-                    order.yOrder = j;
-                    order.coefficient = coefs[i][j];
-                    return order;
-                }
-            }
-        }
-    }
-
-    return order;
 }
 
 template <typename Engine>

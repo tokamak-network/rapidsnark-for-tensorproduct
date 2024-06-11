@@ -34,6 +34,7 @@ namespace PolyUtils {
     FrElementMatrix reduceDimPoly(FrElementMatrix& coefs);
     void paddingMatrix(FrElementMatrix& matrix, size_t targetRowLength, size_t targetColLength);
     size_t minPowerOfTwo(size_t x);
+    size_t checkDim(FrElementMatrix& x);
     FrElementMatrix _transpose(const FrElementMatrix& matrix);
 
     struct OrderPoly {
